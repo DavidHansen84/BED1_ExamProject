@@ -5,7 +5,7 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
-        Status: {
+        Name: {
             type: Sequelize.DataTypes.STRING,
             defaultValue: "Ordered",
             validate: {

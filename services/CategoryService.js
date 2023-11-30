@@ -14,10 +14,19 @@ class CategoryService {
         )
     }
 
-    async get(category) {
-        return this.Category.findAll({
+    async getOne(category) {
+        return this.Category.findOne({
             where: { 
                 Name: category,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
+    async get() {
+        return this.Category.findAll({
+            where: { 
             }
         }).catch( err => {
             return (err)

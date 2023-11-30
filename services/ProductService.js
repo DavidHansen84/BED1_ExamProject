@@ -6,20 +6,6 @@ class ProductService {
         this.Product = db.Product;
     }
 
-    // async populateProducts() {
-    //     try {
-    //         const jsonData = fs.readFileSync('./data/memes.json', 'utf8');
-    //         const queries = JSON.parse(jsonData);
-
-    //         for (const queryData of queries) {
-    //             await this.client.query(queryData.query);
-    //             console.log(`Query executed for status ID ${queryData.id}`);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error populating Status:', error);
-    //     }
-    // }
-
     async create(Name, ImageURL, Description, Price, Quantity, date_added, Brand, Category) {
         return this.Product.create(
             {

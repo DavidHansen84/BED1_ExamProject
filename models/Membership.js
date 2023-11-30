@@ -5,7 +5,7 @@ module.exports = (sequelize, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
-        Membership: {
+        Name: {
             type: Sequelize.DataTypes.STRING,
             defaultValue: "Bronze",
             validate: {

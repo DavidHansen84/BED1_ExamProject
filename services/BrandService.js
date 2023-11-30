@@ -14,10 +14,19 @@ class BrandService {
         )
     }
 
-    async get(brand) {
-        return this.Brand.findAll({
+    async getOne(brand) {
+        return this.Brand.findOne({
             where: { 
                 Name: brand,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
+    async get() {
+        return this.Brand.findAll({
+            where: { 
             }
         }).catch( err => {
             return (err)

@@ -16,23 +16,23 @@ module.exports = (sequelize, Sequelize) => {
 				type: Sequelize.DataTypes.STRING,
 				allowNull: false,
 			},
-            telephonenumber: {
+            telephoneNumber: {
                 type: Sequelize.DataTypes.INTEGER,
                 allownull: false
             },
-			Email: {
+			email: {
 				type: Sequelize.DataTypes.STRING,
 				allowNull: false,
 			},
-			EncryptedPassword: {
+			password: {
 				type: Sequelize.DataTypes.BLOB,
 				allowNull: false,
 			},
-			Salt: {
+			salt: {
 				type: Sequelize.DataTypes.BLOB,
 				allowNull: false,
 			},
-            Purchases: {
+            purchases: {
                 type: Sequelize.DataTypes.INTEGER,
                 defaultValue: 0,
                 allowNull: false,
