@@ -9,8 +9,11 @@ var db = require('./models');
 db.sequelize.sync({ force: false });
 
 var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+var authRouter = require('./routes/auth');
 var initRouter = require('./routes/init');
+var brandRouter = require('./routes/brand');
+var categoryRouter = require('./routes/category');
+var productRouter = require('./routes/product');
 
 var app = express();
 
@@ -25,8 +28,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/auth', authRouter);
 app.use('/init', initRouter);
+app.use('/brands', brandRouter);
+app.use('/categories', categoryRouter);
+app.use('/products', productRouter);
 
 
 // catch 404 and forward to error handler

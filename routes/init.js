@@ -22,15 +22,19 @@ async function fetchProducts() {
     products = response.data;
 }
 
-async function getCategory(products) {
+async function getCategory(products, res) {
     try {
 
         let CategoryList = await categoryService.get();
 
         if (CategoryList.length === 0) {
             for (const obj of products.data) {
-                await categoryService.create(obj.category);
+                let categoryExist = await categoryService.getOne(obj.category);
+                if (!categoryExist) {
+                    await categoryService.create(obj.category);
+                }
             };
+            console.log("Category table populated!")
         } else {
             console.log("Category are already populated!")
         }
@@ -43,15 +47,19 @@ async function getCategory(products) {
     }
 }
 
-async function getBrand(products) {
+async function getBrand(products, res) {
     try {
 
         let BrandList = await brandService.get();
 
         if (BrandList.length === 0) {
             for (const obj of products.data) {
-                await brandService.create(obj.brand);
-            };
+                let brandExist = await brandService.getOne(obj.brand);
+                if (!brandExist) {
+                    await brandService.create(obj.brand);
+                };
+            }
+            console.log("Brands table populated!")
         } else {
             console.log("Brand are already populated!")
         }
@@ -89,6 +97,7 @@ async function populateProduct(products) {
 
                 productService.create(Name, ImageURL, Description, Price, Quantity, date_added, Brand, Category)
             };
+            console.log("Products table populated!")
         } else {
             console.log("Products are already populated!")
         }
@@ -108,8 +117,9 @@ async function populateRoles() {
 
         if (RolesList.length === 0) {
 
-            roleService.create("Admin");
-            roleService.create("User");
+            await roleService.create("Admin");
+            await roleService.create("User");
+            console.log("Roles table populated");
 
         } else {
             console.log("Roles are already populated!")
@@ -130,12 +140,12 @@ async function populateMemberships() {
 
         if (MembershipList.length === 0) {
 
-            membershipService.create("Bronze");
-            membershipService.create("Silver");
-            membershipService.create("Gold");
-
+            await membershipService.create("Bronze");
+            await membershipService.create("Silver");
+            await membershipService.create("Gold");
+            console.log("Membership table populated!");
         } else {
-            console.log("Roles are already populated!")
+            console.log("Memberships are already populated!")
         }
     } catch (error) {
         console.error("Error:", error);
@@ -152,13 +162,15 @@ async function createAdmin(res) {
         let UserList = await userService.get();
 
         if (UserList.length === 0) {
+            let membership = await membershipService.getOne("Bronze");
+            let role = await roleService.getOne("Admin");
 
             var salt = crypto.randomBytes(16);
-            crypto.pbkdf2("P@ssword2023", salt, 310000, 32, 'sha256', function(err, hashedPassword) {
-              if (err) { return next(err); }
-              userService.createAdmin("Admin", hashedPassword, "admin@noroff.no", "Admin", "Support", "Online", 911, salt);
+            crypto.pbkdf2("P@ssword2023", salt, 310000, 32, 'sha256', function (err, hashedPassword) {
+                if (err) { return next(err); }
+                userService.create("Admin", hashedPassword, "admin@noroff.no", "Admin", "Support", "Online", 911, salt, membership.Id, role.Id);
             });
-
+            console.log("Admin created!")
         } else {
             console.log("User Admin is already Created!")
         }
@@ -205,12 +217,13 @@ router.get('/', async function (req, res, next) {
 router.post('/', async function (req, res, next) {
     try {
         await fetchProducts();
-        await getCategory(products);
-        await getBrand(products);
+        await getCategory(products, res);
+        await getBrand(products, res);
         await populateProduct(products);
         await populateRoles();
         await populateMemberships();
         await createAdmin(res);
+        console.log("Database populated!")
         res.end();
 
     } catch (error) {

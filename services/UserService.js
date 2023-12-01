@@ -5,7 +5,7 @@ class UserService {
     }
 
 
-    async createAdmin(Username, Password, Email, FirstName, LastName, Address, Telephone, Salt ) {
+    async create(Username, Password, Email, FirstName, LastName, Address, Telephone, Salt, membership, role ) {
         return this.User.create(
             {
                 username: Username,
@@ -15,30 +15,37 @@ class UserService {
                 telephoneNumber: Telephone,
                 email: Email,
                 password: Password,
-                RoleId: 1,
-                MembershipId: 1,
+                RoleId: role,
+                MembershipId: membership,
                 salt: Salt
             }
         )
     }
 
-    async createUser( Username, Password, Email, FirstName, LastName, Address, Telephone ) {
-        return this.User.create(
-            {
-                username: Username,
-                firstName: FirstName,
-                lastName: LastName,
-                address: Address,
-                telephoneNumber: Telephone,
-                email: Email,
-                password: Password,
-            }
-        )
-    }
 
     async get() {
         return this.User.findAll({
             where: { 
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
+    async getOne(email) {
+        return this.User.findOne({
+            where: { 
+                email: email,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
+    async getUsername(username) {
+        return this.User.findOne({
+            where: { 
+                username: username,
             }
         }).catch( err => {
             return (err)

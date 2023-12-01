@@ -14,6 +14,16 @@ class RoleService {
         )
     }
 
+    async getOne(role) {
+        return this.Role.findOne({
+            where: { 
+                Name: role,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
     async get() {
         return this.Role.findAll({
             where: { 

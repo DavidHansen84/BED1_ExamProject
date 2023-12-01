@@ -1,32 +1,31 @@
-class MembershipService {
+class CartService {
     constructor(db) {
         this.client = db.sequelize;
-        this.Membership = db.Membership;
+        this.Cart = db.Cart;
     }
 
 
-    async create(Name) {
-        return this.Membership.create(
+    async create(Name, UserId) {
+        return this.Cart.create(
             {
-
                 Name: Name,
+                UserId: UserId
             }
         )
     }
 
-    async getOne(membership) {
-        return this.Membership.findOne({
+    async getOne(user) {
+        return this.Cart.findOne({
             where: { 
-                Name: membership,
+                UserId: user,
             }
         }).catch( err => {
             return (err)
         })
     }
 
-
-    async get() {
-        return this.Membership.findAll({
+    async getAll() {
+        return this.Cart.findAll({
             where: { 
             }
         }).catch( err => {
@@ -36,4 +35,4 @@ class MembershipService {
 
 }
 
-module.exports = MembershipService;
+module.exports = CartService;

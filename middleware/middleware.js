@@ -10,6 +10,7 @@ function isAuth(req, res, next) {
 
     try {
         const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
+        console.log(decodedToken);
         req.user = decodedToken; 
         next();
     } catch (err) {
