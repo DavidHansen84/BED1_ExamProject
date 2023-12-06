@@ -5,31 +5,42 @@ module.exports = (sequeliza, Sequelize) => {
             primaryKey: true,
             autoIncrement: true
         },
-        Name: { 
+        Name: {
             type: Sequelize.DataTypes.STRING,
-                allowNull: false
+            allowNull: false
         },
-        ImageURL: { 
+        ImageURL: {
             type: Sequelize.DataTypes.STRING,
-                    allowNull: false
+            allowNull: false
         },
-        Description: { 
+        Description: {
             type: Sequelize.DataTypes.STRING,
-                        allowNull: false
+            allowNull: false
         },
-        Price: { 
+        Price: {
             type: Sequelize.DataTypes.INTEGER,
             allowNull: false
         },
-        Quantity: { 
+        Quantity: {
             type: Sequelize.DataTypes.INTEGER,
             allowNull: false
+        },
+        Active: {
+            type: Sequelize.DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 1,
+            validate: {
+                isIn: {
+                    args: [[1, 0]],
+                    msg: "Active must be 1 or 0. 1 is active 0 is inactive"
+                }
+            }
         }
-        }, {
-        timestamps: true 
+    }, {
+        timestamps: true
     });
 
-    Product.associate = function(models) {
+    Product.associate = function (models) {
         Product.belongsTo(models.Category, { foreignKey: { allowNull: false } });
         Product.belongsTo(models.Brand, { foreignKey: { allowNull: false } });
     };

@@ -19,5 +19,9 @@ module.exports = (sequelize, Sequelize) => {
         timestamps: true 
     });
 
+    Status.associate = function(models) {
+        Status.hasMany(models.Order, { foreignKey: { allowNull: false } });
+    };
+
     return Status;
 };

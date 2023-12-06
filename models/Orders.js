@@ -13,7 +13,8 @@ module.exports = (sequelize, Sequelize) => {
     Order.associate = function(models) {
         Order.belongsToMany(models.Product, { through: 'ProductsInOrder', allowNull: false });
         Order.belongsTo(models.User, { allowNull: false } );
-    };
+        Order.belongsTo(models.Status, { foreignKey: { allowNull: false } });
+        };
     
     return Order;
 };

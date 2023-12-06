@@ -24,6 +24,16 @@ class BrandService {
         })
     }
 
+    async getOneId(Id) {
+        return this.Brand.findOne({
+            where: { 
+                Id: Id,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
     async get() {
         return this.Brand.findAll({
             where: { 
@@ -31,6 +41,23 @@ class BrandService {
         }).catch( err => {
             return (err)
         })
+    }
+
+    async delete(Id) {
+        return this.Brand.destroy({
+            where: { 
+                Id: Id,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
+    async update(Id, name) {
+        return this.Brand.update(
+            {
+                Name: name
+            }, { where: { Id: Id } });
     }
 
 }

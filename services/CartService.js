@@ -14,9 +14,10 @@ class CartService {
         )
     }
 
-    async getOne(user) {
+    async getOne(Name, user) {
         return this.Cart.findOne({
             where: { 
+                Name: Name,
                 UserId: user,
             }
         }).catch( err => {
@@ -31,6 +32,20 @@ class CartService {
         }).catch( err => {
             return (err)
         })
+    }
+
+    async ordered(Id) {
+        return this.Cart.update(
+            {
+                Active: 0,
+            }, { where: { Id: Id } });
+    }
+
+    async activate(Id) {
+        return this.Cart.update(
+            {
+                Active: 1,
+            }, { where: { Id: Id } });
     }
 
 }

@@ -5,16 +5,15 @@ function isAuth(req, res, next) {
     const token = req.headers.authorization?.split(' ')[1];
 
     if (!token) {
-        return res.status(400).json({status: "error", error : "JWT token not provided"});
+        return res.status(400).json({ status: "error", error: "JWT token not provided" });
     }
 
     try {
         const decodedToken = jwt.verify(token, process.env.TOKEN_SECRET);
-        console.log(decodedToken);
-        req.user = decodedToken; 
+        req.user = decodedToken;
         next();
     } catch (err) {
-        return res.status(400).json({status: "error", error: "Invalid token"});
+        return res.status(400).json({ status: "error", error: "Invalid token" });
     }
 }
 

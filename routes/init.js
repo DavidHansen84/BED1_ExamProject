@@ -15,6 +15,8 @@ var UserService = require('../services/UserService');
 var userService = new UserService(db);
 var MembershipService = require('../services/MembershipService');
 var membershipService = new MembershipService(db);
+var StatusService = require('../services/StatusService');
+var statusService = new StatusService(db);
 
 let products = []
 async function fetchProducts() {
@@ -84,7 +86,6 @@ async function populateProduct(products) {
         if (ProductList.length === 0) {
             for (const obj of products.data) {
                 let category = await categoryService.getOne(obj.category);
-                console.log(category.Id)
                 let brand = await brandService.getOne(obj.brand);
                 Category = category.Id;
                 Brand = brand.Id;
@@ -156,6 +157,29 @@ async function populateMemberships() {
     }
 }
 
+async function populateStatus() {
+    try {
+
+        let statusList = await statusService.get();
+
+        if (statusList.length === 0) {
+
+            await statusService.create("Ordered");
+            await statusService.create("In Progress");
+            await statusService.create("Completed");
+            console.log("Status table populated!");
+        } else {
+            console.log("Status are already populated!")
+        }
+    } catch (error) {
+        console.error("Error:", error);
+        res.status(500).json({
+            status: "error",
+            error: "Internal Server Error",
+        });
+    }
+}
+
 async function createAdmin(res) {
     try {
 
@@ -185,35 +209,6 @@ async function createAdmin(res) {
 
 
 /* Populate Products table */
-router.get('/', async function (req, res, next) {
-
-
-    try {
-
-        let CategoryList = await categoryService.get();
-
-        if (CategoryList.length === 0) {
-            await fetchProducts();
-            for (const obj of products.data) {
-                getCategory(obj, res);
-            };
-            res.end();
-        } else {
-            console.log("Category are already populated!")
-            res.end();
-        }
-    } catch (error) {
-        console.error("Error:", error);
-        res.status(500).json({
-            status: "error",
-            error: "Internal Server Error",
-        });
-    }
-    // setTimeout(() => console.log(products.data[1].category), 1000);
-
-});
-
-/* Populate Products table */
 router.post('/', async function (req, res, next) {
     try {
         await fetchProducts();
@@ -222,9 +217,10 @@ router.post('/', async function (req, res, next) {
         await populateProduct(products);
         await populateRoles();
         await populateMemberships();
+        await populateStatus();
         await createAdmin(res);
         console.log("Database populated!")
-        res.end();
+        res.status(200).json({status: "Success", message: "Database populated!"})
 
     } catch (error) {
         console.error("Error:", error);
