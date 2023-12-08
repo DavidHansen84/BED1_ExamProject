@@ -17,4 +17,16 @@ function isAuth(req, res, next) {
     }
 }
 
-module.exports = isAuth;
+function isAdmin(req, res, next) {
+    if(req.user.role == "Admin") {
+        console.log(req.user.role)
+        next();
+        return;
+    }
+    else {
+        console.log(req.user)
+        res.status(401).send({ status: "Unauthorized", error: "Only admin access"});
+    }
+}
+
+module.exports = { isAuth, isAdmin };

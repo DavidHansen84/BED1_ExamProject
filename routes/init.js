@@ -114,7 +114,7 @@ async function populateProduct(products) {
 async function populateRoles() {
     try {
 
-        let RolesList = await roleService.get();
+        let RolesList = await roleService.getAll();
 
         if (RolesList.length === 0) {
 

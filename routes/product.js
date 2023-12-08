@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const db = require('../models');
-const isAuth = require('../middleware/middleware');
+const { isAuth, isAdmin } = require('../middleware/middleware');
 var ProductService = require('../services/ProductService');
 var productService = new ProductService(db);
 var CartService = require('../services/CartService');
@@ -31,6 +31,7 @@ router.get('/cart', isAuth, async function (req, res, next) {
   if (!cartName) {
     cartName = "";
   }
+  console.log(req.user)
   const userId = req.user.id;
   if (userId == null) {
     res.status(400).json({ status: "error", error: "Error getting the user ID" });
@@ -155,7 +156,7 @@ router.delete('/del/cart', isAuth, async function (req, res, next) {
 });
 
 // POST to add product ADMIN ONLY -- need isAdmin
-router.post('/add', isAuth, async function (req, res, next) {
+router.post('/add', isAuth, isAdmin, async function (req, res, next) {
   let brandExists
   let categoryExists
   const { Name, ImageURL, Description, Price, Quantity, Brand, Category } = req.body;
@@ -260,7 +261,7 @@ router.post('/add', isAuth, async function (req, res, next) {
 });
 
 // PUT to update product ADMIN ONLY -- need isAdmin
-router.put('/edit/:id', isAuth, async function (req, res, next) {
+router.put('/edit/:id', isAuth, isAdmin, async function (req, res, next) {
   let brandExists
   let categoryExists
   const productId = parseInt(req.params.id);
@@ -373,7 +374,7 @@ router.put('/edit/:id', isAuth, async function (req, res, next) {
 });
 
 // PUT to activate a product ADMIN ONLY need isAdmin
-router.put('/activate/:id', isAuth, async function (req, res, next) {
+router.put('/activate/:id', isAuth, isAdmin, async function (req, res, next) {
   const productId = parseInt(req.params.id);
   if (!productId) {
     res.status(400).json({
@@ -401,7 +402,7 @@ router.put('/activate/:id', isAuth, async function (req, res, next) {
 });
 
 // DELETE to soft-delete product ADMIN ONLY -- need isAdmin
-router.delete('/delete/:id', isAuth, async function (req, res, next) {
+router.delete('/delete/:id', isAuth, isAdmin, async function (req, res, next) {
   const productId = parseInt(req.params.id);
   if (!productId) {
     res.status(400).json({

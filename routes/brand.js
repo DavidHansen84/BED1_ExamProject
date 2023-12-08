@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const db = require('../models');
-const isAuth = require('../middleware/middleware');
+const { isAuth, isAdmin } = require('../middleware/middleware');
 var BrandService = require('../services/BrandService');
 var brandService = new BrandService(db);
 var ProductService = require('../services/ProductService');
@@ -18,7 +18,7 @@ router.get('/', async function (req, res, next) {
 });
 
 // POST a new brand
-router.post('/add', isAuth, async function (req, res, next) {
+router.post('/add', isAuth, isAdmin, async function (req, res, next) {
 
   const { Name } = req.body;
   try {
@@ -39,7 +39,7 @@ router.post('/add', isAuth, async function (req, res, next) {
 });
 
 // PUT change the name of the brand
-router.put('/add/:id', isAuth, async function (req, res, next) {
+router.put('/add/:id', isAuth, isAdmin, async function (req, res, next) {
   try {
     const BrandId = parseInt(req.params.id);
     const name = req.body.Name;
@@ -74,7 +74,7 @@ router.put('/add/:id', isAuth, async function (req, res, next) {
 });
 
 // DELETE a brand
-router.delete('/delete/:id', isAuth, async (req, res) => {
+router.delete('/delete/:id', isAuth, isAdmin, async (req, res) => {
   // #swagger.tags = ['Categories']
   // #swagger.description = "Deletes a Brand if it is not linked to a product"
   // #swagger.produces = ['text/html']

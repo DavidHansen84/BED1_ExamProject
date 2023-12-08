@@ -8,7 +8,7 @@ var logger = require('morgan');
 var db = require('./models');
 db.sequelize.sync({ force: false });
 
-var indexRouter = require('./routes/index');
+var adminRouter = require('./routes/admin');
 var authRouter = require('./routes/auth');
 var initRouter = require('./routes/init');
 var brandRouter = require('./routes/brand');
@@ -28,7 +28,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/', indexRouter);
+app.use('/admin', adminRouter);
 app.use('/auth', authRouter);
 app.use('/init', initRouter);
 app.use('/brands', brandRouter);

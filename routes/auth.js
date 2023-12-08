@@ -10,9 +10,17 @@ var RoleService = require('../services/RoleService');
 var roleService = new RoleService(db);
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json();
-const isAuth = require('../middleware/middleware');
+const { isAuth } = require('../middleware/middleware');
 var jwt = require('jsonwebtoken');
 const validator = require('email-validator');
+
+let role
+
+async function getRole(RoleId) {
+  let roleInfo = await roleService.get(RoleId);
+  
+  role = roleInfo[0].dataValues.Name;
+}
 
 // Post for registered users to be able to login
 router.post("/login", jsonParser, async (req, res, next) => {
@@ -27,29 +35,32 @@ router.post("/login", jsonParser, async (req, res, next) => {
       return res.status(400).json({status: "error", error: "Password is required."});
     }
     userService.getOne(Email).then((data) => {
-        if(data === null) {
+              if(data === null) {
             return res.status(400).json({status: "error", error: "Incorrect email or password"});
         }
+        getRole(data.RoleId);
         crypto.pbkdf2(Password, data.salt, 310000, 32, 'sha256', function(err, hashedPassword) {
           if (err) { return cb(err); }
           if (!crypto.timingSafeEqual(data.password, hashedPassword)) {
               return res.status(400).json({status: "error", error: "Incorrect email or password"});
           }
           let token;
+          
           try {
+            
+            console.log(role)
             token = jwt.sign(
-              { id: data.Id, email: data.email },
+              { id: data.Id, email: data.email, role: role },
               process.env.TOKEN_SECRET,
               { expiresIn: "2h" }
             );
           } catch (err) {
             res.status(400).json({error: "Something went wrong with creating JWT token"})
           }
-          res.status(200).json({status: "success" , result: "You are logged in", id: data.Id, email: data.email, token: token});
+          res.status(200).json({status: "success" , result: "You are logged in", id: data.Id, email: data.email, role: role, token: token});
         });
     });
 });
-
 
 // Post for new users to register / signup
 router.post("/register", async (req, res, next) => {

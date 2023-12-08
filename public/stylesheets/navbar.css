@@ -1,0 +1,46 @@
+/* Remove the padding and margin properties for section, h4, and header */
+/* section {
+    padding-top: 50px;
+    margin-top: -50px;
+}
+
+h4 {
+    padding-top: 50px;
+    margin-top: -50px;
+}
+
+header {
+    padding-top: 50px;
+} */
+
+/* Add custom styles for the navbar */
+#navbar {
+    padding-top: 10px; /* Adjust the top padding as needed */
+    padding-bottom: 10px;
+}
+
+.navbar-brand {
+    margin-right: 20px; /* Adjust the margin as needed */
+}
+
+.navbar-nav {
+    display: flex;
+    align-items: center;
+    margin: 0; /* Remove default margin */
+    padding: 0; /* Remove default padding */
+}
+
+.navbar-nav .nav-item {
+    margin-right: 15px; /* Adjust the margin as needed */
+}
+
+.nav-link {
+    color: black;
+    font-weight: bold;
+    transition: color 0.2s ease-in-out;
+}
+
+.nav-link:hover {
+    color: #007bff;
+}
+

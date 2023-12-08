@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 const db = require('../models');
-const isAuth = require('../middleware/middleware');
+const { isAuth } = require('../middleware/middleware');
 var CartService = require('../services/CartService');
 var cartService = new CartService(db);
 var ProductsInCartService = require('../services/ProductsInCartService');
@@ -13,7 +13,6 @@ var orderService = new OrderService(db);
 var ProductsInOrderService = require('../services/ProductsInOrderService');
 var productsInOrderService = new ProductsInOrderService(db);
 var StatusService = require('../services/StatusService');
-const { or } = require('sequelize');
 var statusService = new StatusService(db);
 
 
@@ -186,7 +185,6 @@ router.post('/now', isAuth, async function (req, res, next) {
     });
   }
 });
-
 
 // DELETE to remove product from user cart
 router.delete('/del/cart', isAuth, async function (req, res, next) {

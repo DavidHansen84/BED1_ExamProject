@@ -1,11 +1,15 @@
 var express = require('express');
 var router = express.Router();
 const db = require('../models');
-const isAuth = require('../middleware/middleware');
+const { isAuth, isAdmin } = require('../middleware/middleware');
 var CategoryService = require('../services/CategoryService');
 var categoryService = new CategoryService(db);
 var ProductService = require('../services/ProductService');
 var productService = new ProductService(db);
+
+
+// need to add a API to change the category of a product 
+
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
@@ -18,7 +22,7 @@ router.get('/', async function (req, res, next) {
 });
 
 // POST a new category
-router.post('/add', isAuth, async function (req, res, next) {
+router.post('/add', isAuth, isAdmin, async function (req, res, next) {
 
   const { Name } = req.body;
   try {
@@ -39,7 +43,7 @@ router.post('/add', isAuth, async function (req, res, next) {
 });
 
 // PUT change the name of the category
-router.put('/add/:id', isAuth, async function (req, res, next) {
+router.put('/add/:id', isAuth, isAdmin, async function (req, res, next) {
   try {
     const CategoryId = parseInt(req.params.id);
     const name = req.body.Name;
@@ -73,7 +77,7 @@ router.put('/add/:id', isAuth, async function (req, res, next) {
 });
 
 // DELETE a category
-router.delete('/delete/:id', isAuth, async (req, res) => {
+router.delete('/delete/:id', isAuth, isAdmin, async (req, res) => {
   // #swagger.tags = ['Categories']
   // #swagger.description = "Deletes a category if it is not linked to a product"
   // #swagger.produces = ['text/html']
