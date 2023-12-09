@@ -19,6 +19,7 @@ var brandService = new BrandService(db);
 // GET all the products
 router.get('/', async function (req, res, next) {
   let products = await productService.get();
+  
   res.status(200).json({ result: "Success", products: products });
 });
 
@@ -56,7 +57,7 @@ router.get('/cart', isAuth, async function (req, res, next) {
       let Quantity = obj.Quantity;
       totalPrice = totalPrice + (Price * Quantity);
     }
-    
+        
     res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC, TotalPrice: totalPrice });
  } catch (error) {
   console.error("Error:", error);

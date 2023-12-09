@@ -55,6 +55,20 @@ class ProductService {
             }, { where: { Id: Id } });
     }
 
+    async updateCategory(Id, Category) {
+        return this.Product.update(
+            {
+                CategoryId: Category,
+            }, { where: { Id: Id } });
+    }
+
+    async updateBrand(Id, Brand) {
+        return this.Product.update(
+            {
+                BrandId: Brand,
+            }, { where: { Id: Id } });
+    }
+
     async get() {
         return this.Product.findAll({
             where: {

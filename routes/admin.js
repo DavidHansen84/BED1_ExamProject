@@ -1,9 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var bodyParser = require('body-parser')
-var jsonParser = bodyParser.json()
 const { isAuth, isAdmin } = require('../middleware/middleware');
-var createError = require('http-errors');
 var axios = require("axios");
 
 const url = "http://localhost:3000/products";

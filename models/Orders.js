@@ -6,6 +6,14 @@ module.exports = (sequelize, Sequelize) => {
             autoIncrement: true
         },
         Name: Sequelize.DataTypes.STRING,
+        OrderNumber: {
+            type: Sequelize.DataTypes.STRING,
+            allowNull: false
+        },
+        MembershipId: {
+            type: Sequelize.DataTypes.INTEGER,
+            allowNull: false
+        }
     },{
         timestamps: true
     });

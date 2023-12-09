@@ -163,9 +163,8 @@ async function populateStatus() {
         let statusList = await statusService.get();
 
         if (statusList.length === 0) {
-
-            await statusService.create("Ordered");
             await statusService.create("In Progress");
+            await statusService.create("Ordered");
             await statusService.create("Completed");
             console.log("Status table populated!");
         } else {

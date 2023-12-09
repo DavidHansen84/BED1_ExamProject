@@ -14,7 +14,30 @@ var ProductsInOrderService = require('../services/ProductsInOrderService');
 var productsInOrderService = new ProductsInOrderService(db);
 var StatusService = require('../services/StatusService');
 var statusService = new StatusService(db);
+var UserService = require("../services/UserService")
+var userService = new UserService(db);
+var MembershipService = require('../services/MembershipService');
+var membershipService = new MembershipService(db);
+var crypto = require('crypto');
 
+async function createOrderNumber() {
+  // sadly I had to use ChatGPT to fix the code I had here :(
+  // could not remember the full way to do this so found this here - https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+  const orderNumber = crypto.randomBytes(4).toString('hex');
+  
+  console.log(orderNumber)
+  await checkOrderNumber(orderNumber);
+  return orderNumber;
+}
+
+async function checkOrderNumber(orderNumber) {
+  let checkedOrderNumber = await orderService.getOrderNumber(orderNumber);
+  if ( checkedOrderNumber !== null ) {
+    await createOrderNumber();
+  }
+  console.log(orderNumber);
+  return orderNumber;
+}
 
 // GET the users cart
 router.get('/', isAuth, async function (req, res, next) {
@@ -109,9 +132,13 @@ router.post('/add/cart', isAuth, async function (req, res, next) {
 
 // POST add cart to the order
 router.post('/now', isAuth, async function (req, res, next) {
-  let totalPrice = 0
+  // could not remember the full way to do this so found this here - https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
+  let orderNumber = await createOrderNumber();
+  let totalPrice = 0;
+  let discount = 0;
   try {
-
+   
+    console.log(orderNumber)
     let { cartName } = req.body
     if (!cartName) {
       cartName = "";
@@ -136,10 +163,29 @@ router.post('/now', isAuth, async function (req, res, next) {
       res.status(400).json({ result: "Fail", message: "Cart does not exist" });
       return res.end();
     }
+    let user = await userService.getOne(req.user.email);
+    if (!user) {
+      res.status(400).json({ status: "error", error: "Error getting the user" });
+      return res.end();
+    }
+    let membership = await membershipService.getOneId(user.MembershipId);
+    if (!membership) {
+      res.status(400).json({ status: "error", error: "Error getting the membership" });
+      return res.end();
+    }
+    if (membership.Name == "Silver") {
+      discount = 0.15;
+    }
+    if (membership.Name == "Gold") {
+      discount = 0.30;
+    }
+    if (membership.Name == "Bronze") {
+      console.log("Membership is Bronze. No discount!")
+    }
 
-    let status = await statusService.getOne("Ordered")
+    let status = await statusService.getOne("In Progress")
 
-    await orderService.create(cartName, userId, status.Id);
+    await orderService.create(cartName, userId, status.Id, orderNumber, membership.Id);
     let order = await orderService.getOne(cartName, userId);
 
     for (const obj of PIC) {
@@ -152,31 +198,48 @@ router.post('/now', isAuth, async function (req, res, next) {
     }
     
     let PIO = await productsInOrderService.getAll(order.Id)
-    console.log(PIO)
-    console.log("before");
     for (const obj of PIO) {
       let product = await productService.getOne(obj.ProductId);
-      console.log(product)
       let newQuantity = product[0].Quantity - obj.Quantity;
-      console.log(newQuantity)
       if (newQuantity < 0) {
         res.status(400).json({ result: "Fail", message: "not enough product in stock", Product: product[0].Name });
         return res.end();
       }
       await productService.updateQuantity(obj.ProductId, newQuantity);
     }
-    console.log("after");
-  
+    
+    let totalQuantity = user.purchases;
 
     for (const obj of PIO) {
       let Price = obj.UnitPrice;
       let Quantity = obj.Quantity;
       totalPrice = totalPrice + (Price * Quantity);
+      totalQuantity = totalQuantity + Quantity;
     }
+    
+    
+
+    await userService.updatePurchases(userId, totalQuantity)
+
+    if (user.purchases < 15) {
+      let newMembership = await membershipService.getOne("Bronze")
+      await userService.updateMembership(userId, newMembership.Id);
+    }
+    if (user.purchases > 14 && user.purchases < 31) {
+      let newMembership = await membershipService.getOne("Silver")
+      await userService.updateMembership(userId, newMembership.Id);
+    }
+    if (user.purchases > 30) {
+      let newMembership = await membershipService.getOne("Gold")
+      await userService.updateMembership(userId, newMembership.Id);
+    }
+
+    let discountTotal = totalPrice - ( totalPrice * discount);
+    
     PIO = await productsInOrderService.getAll(order.Id)
     await cartService.ordered(cart.Id)
 
-    res.status(200).json({ result: "Success", Order: order, ProductsInOrder: PIO, TotalPrice: totalPrice });
+    res.status(200).json({ result: "Success", Order: order, ProductsInOrder: PIO, TotalPrice: totalPrice, DiscountTotal: discountTotal, OrderNumber: orderNumber, MembershiStatus: membership.Name });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({

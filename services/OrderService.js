@@ -5,12 +5,14 @@ class OrderService {
     }
 
 
-    async create(Name, UserId, status) {
+    async create(Name, UserId, status, orderNumber, membershipStatus ) {
         return this.Order.create(
             {
                 Name: Name,
                 UserId: UserId,
-                StatusId: status
+                StatusId: status,
+                OrderNumber: orderNumber,
+                MembershipId: membershipId
             }
         )
     }
@@ -20,6 +22,16 @@ class OrderService {
             where: { 
                 Name: Name,
                 UserId: user,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
+    async getOrderNumber(orderNumber) {
+        return this.Order.findOne({
+            where: { 
+                OrderNumber: orderNumber
             }
         }).catch( err => {
             return (err)

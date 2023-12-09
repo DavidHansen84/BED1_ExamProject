@@ -24,6 +24,16 @@ class MembershipService {
         })
     }
 
+    async getOneId(Id) {
+        return this.Membership.findOne({
+            where: { 
+                Id: Id,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
 
     async get() {
         return this.Membership.findAll({

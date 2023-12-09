@@ -22,6 +22,20 @@ class UserService {
         )
     }
 
+    async updatePurchases(Id, purchases) {
+        return this.User.update(
+            {
+                purchases: purchases,
+            }, { where: { Id: Id } });
+    }
+
+    async updateMembership(Id, MembershipId) {
+        return this.User.update(
+            {
+                MembershipId: MembershipId,
+            }, { where: { Id: Id } });
+    }
+
 
     async get() {
         return this.User.findAll({

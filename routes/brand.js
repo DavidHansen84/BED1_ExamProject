@@ -39,7 +39,7 @@ router.post('/add', isAuth, isAdmin, async function (req, res, next) {
 });
 
 // PUT change the name of the brand
-router.put('/add/:id', isAuth, isAdmin, async function (req, res, next) {
+router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
   try {
     const BrandId = parseInt(req.params.id);
     const name = req.body.Name;
@@ -67,6 +67,46 @@ router.put('/add/:id', isAuth, isAdmin, async function (req, res, next) {
     return res.end();
 
 
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ result: "Fail", error: "Error editing brand" })
+  }
+});
+
+// PUT change brand of the product
+router.put('/product/:id', isAuth, isAdmin, async function (req, res, next) {
+  try {
+    const ProductId = parseInt(req.params.id);
+    const newBrand = req.body.newBrand;
+    if (!newBrand) {
+      res.status(400).json({ result: "Fail", error: "newBrand not provided" })
+      return res.end();
+    }
+    if (ProductId == null) {
+      res.status(400).json({ result: "Fail", error: "Error getting product id" })
+      return res.end();
+    }
+    const ProductList = await productService.getOne(ProductId);
+    if (ProductList === null) {
+      res.status(400).json({ result: "Fail", error: "Product does not exist" })
+      return res.end();
+    }
+    const BrandList = await brandService.getOne(newBrand);
+    if (BrandList === null) {
+      res.status(400).json({ result: "Fail", error: "Brand does not exist" })
+      return res.end();
+    }
+
+    const Brand = await brandService.getOne(newBrand);
+
+    const oldBrandId = await productService.getOne(ProductId);
+
+    const oldBrand = await brandService.getOneId(oldBrandId[0].BrandId)
+
+    await productService.updateBrand(ProductId, Brand.Id);
+    
+    res.status(200).json({ Result: "Success", OldBrand: oldBrand.Name, NewBrand: newBrand })
+    
   } catch (err) {
     console.error(err);
     res.status(400).json({ result: "Fail", error: "Error editing brand" })

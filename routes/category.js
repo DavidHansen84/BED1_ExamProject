@@ -43,7 +43,7 @@ router.post('/add', isAuth, isAdmin, async function (req, res, next) {
 });
 
 // PUT change the name of the category
-router.put('/add/:id', isAuth, isAdmin, async function (req, res, next) {
+router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
   try {
     const CategoryId = parseInt(req.params.id);
     const name = req.body.Name;
@@ -70,6 +70,46 @@ router.put('/add/:id', isAuth, isAdmin, async function (req, res, next) {
     return res.end();
 
 
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ result: "Fail", error: "Error editing category" })
+  }
+});
+
+// PUT change category of the product
+router.put('/product/:id', isAuth, isAdmin, async function (req, res, next) {
+  try {
+    const ProductId = parseInt(req.params.id);
+    const newCategory = req.body.newCategory;
+    if (!newCategory) {
+      res.status(400).json({ result: "Fail", error: "newCategory not provided" })
+      return res.end();
+    }
+    if (ProductId == null) {
+      res.status(400).json({ result: "Fail", error: "Error getting product id" })
+      return res.end();
+    }
+    const ProductList = await productService.getOne(ProductId);
+    if (ProductList === null) {
+      res.status(400).json({ result: "Fail", error: "Product does not exist" })
+      return res.end();
+    }
+    const CategoryList = await categoryService.getOne(newCategory);
+    if (CategoryList === null) {
+      res.status(400).json({ result: "Fail", error: "Category does not exist" })
+      return res.end();
+    }
+
+    const Category = await categoryService.getOne(newCategory);
+
+    const oldCategoryId = await productService.getOne(ProductId);
+
+    const oldCategory = await categoryService.getOneId(oldCategoryId[0].CategoryId)
+
+    await productService.updateCategory(ProductId, Category.Id);
+    
+    res.status(200).json({ Result: "Success", OldCategory: oldCategory.Name, NewCategory: newCategory })
+    
   } catch (err) {
     console.error(err);
     res.status(400).json({ result: "Fail", error: "Error editing category" })
