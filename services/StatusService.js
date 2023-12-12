@@ -32,7 +32,7 @@ class StatusService {
         }).catch( err => {
             return (err)
         })
-    }
+    }  
 
 }
 

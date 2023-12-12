@@ -51,7 +51,7 @@ router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
       res.status(400).json({ result: "Fail", error: "Name not provided" })
       return res.end();
     }
-    if (CategoryId == null) {
+    if (CategoryId == null || isNaN(CategoryId)) {
       res.status(400).json({ result: "Fail", error: "Error getting category id" })
       return res.end();
     }

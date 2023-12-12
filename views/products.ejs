@@ -1,77 +1,76 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"/>
-    <link rel="stylesheet" href="/stylesheets/navbar.css" />
-    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/navbar.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
     <div data-spy="scroll" data-target="#navbar" data-offset="0">
       <%- include('./partials/navbar.ejs') %>
-    </div>
+      </div>
     <h2 class="p-3">Products</h2>
     <div class="list-group">
-      <table class="table" id="productsTable">
-        <thead>
-          <tr>
-            <th scope="col">ID</th>
-            <th scope="col">Name</th>
-            <th scope="col">Description</th>
-            <th scope="col">Quantity</th>
-            <th scope="col">Price</th>
-            <th scope="col">Discount</th>
-            <th scope="col">Brand</th>
-            <th scope="col">Category</th>
-            <th scope="col">Image URL</th>
-            <th scope="col">Image</th>
-            <th scope="col">Isdeleted</th>
-            <th scope="col">date_added</th>
-            <th scope="col">Options</th>
-          </tr>
-        </thead>
-        <% getProducts('http://localhost:3000/products') %>
-        <% products.forEach(function(product) { %>
-        <tbody>
-          <tr>
-            <td><%= product.Id %></td>
-            <td><%= product.Name %></td>
-            <td><%= product.Description %></td>
-            <td><%= product.Quantity %></td>
-            <td><%= product.Price %></td>
-            <td><%= product.Description %></td>
-            <td><%= product.BrandId %></td>
-            <td><%= product.CategoryId %></td>
-            <td><%= product.ImageURL %></td>
-            <td>
-              <img
-                class="mb-3"
-                src="<%=product.ImageURL%>"
-                style="width: 30px"
-              />
-            </td>
-            <td>
-
-              <!-- the checkbox comes from https://www.w3schools.com/howto/tryit.asp?filename=tryhow_css_switch -->
-
-              <%if(product.Active==1) { %>
-              <label class="switch">
-                <input type="checkbox" />
-                <span class="slider round"></span>
-              </label>
-              <% } else {%>
-              <label class="switch">
-                <input type="checkbox" checked />
-                <span class="slider round"></span>
-              </label>
-              <% } %>
-            </td>
-            <td><%= product.createdAt %></td>
-            <td><%= "Options here" %></td>
-          </tr>
-          <% }); %>
-        </tbody>
-      </table>
+      
+        <table class="table" id="productsTable">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Description</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Price</th>
+              <th scope="col">Discount</th>
+              <th scope="col">Brand</th>
+              <th scope="col">Category</th>
+              <th scope="col">Image URL</th>
+              <th scope="col">Image</th>
+              <th scope="col">Isdeleted</th>
+              <th scope="col">date_added</th>
+              <th scope="col">Options</th>
+              
+            </tr>
+          </thead>
+          <% products.forEach(function(product) { %>
+          <tbody>
+            
+              <tr>
+                <td><%= product.Id %></td>
+                <td><%= product.Name %></td>
+                <td><%= product.Description %></td>
+                <td><%= product.Quantity %></td>
+                <td><%= product.Price %></td>
+                <td><%= product.Description %></td>
+                <td><%= brands[product.BrandId - 1].Name %></td>
+                <td><%= categories[product.CategoryId - 1].Name %></td>
+                <td><%= product.ImageURL %></td>
+                <td><img class="mb-3" src="<%=product.ImageURL%>" alt="<%=product.Name%>" style="width: 30px"/></td>
+                <td><%if(product.Active==1) { %>
+                  <label class="switch">
+                    <input type="checkbox" onclick="return false">
+                    <span class="slider round"></span>
+                  </label> <% } else {%>                                       
+                    <label class="switch">
+                      <input type="checkbox" checked onclick="return false">
+                      <span class="slider round"></span>
+                    </label>
+                    <% } %>
+                </td>
+                <td><%= product.createdAt %></td>
+                <td><%if(product.Active==1) { %>
+                  <button class="btn-sm btn-danger" onclick="deleteProduct(<%=product.Id%>)">Delete</button>
+                  <% } else {%>
+                    <button class="btn-sm btn-success" onclick="activateProduct(<%=product.Id%>)">Activate</button>
+                    <% } %>
+                    <button class="btn-sm btn-warning" onclick="editButton(<%=product.Id%>)">Edit</button></td>
+                
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+              
     </div>
-    <script src="../js/getProducts.js"></script>
+    
+    <script src="../js/Products.js"></script>
   </body>
 </html>

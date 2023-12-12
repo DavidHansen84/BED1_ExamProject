@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/navbar.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div data-spy="scroll" data-target="#navbar" data-offset="0">
+      <%- include('./partials/navbar.ejs') %>
+      </div>
+    <h2 class="p-3">Categories</h2>
+    <div class="list-group">
+      
+        <table class="table" id="productsTable">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Name</th>
+              <th scope="col">Options</th>
+              
+            </tr>
+          </thead>
+          <% categories.forEach(function(category) { %>
+          <tbody>
+              <tr>
+                <td><%= category.Id %></td>
+                <td><%= category.Name %></td>
+                <td><%= "Options here" %></td>
+                
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+              
+    </div>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel='stylesheet' href='/stylesheets/navbar.css' />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+  </head>
+  <body>
+    <div data-spy="scroll" data-target="#navbar" data-offset="0">
+      <%- include('./partials/navbar.ejs') %>
+      </div>
+    <h2 class="p-3">Orders</h2>
+    <div class="list-group">
+      
+        <table class="table" id="productsTable">
+          <thead>
+            <tr>
+              <th scope="col">ID</th>
+              <th scope="col">Order Number</th>
+              <th scope="col">Created</th>
+              <th scope="col">Updated</th>
+              <th scope="col">User id</th>
+              <th scope="col">Order Status</th>
+              <th scope="col">Options</th>
+            </tr>
+          </thead>
+          <% orders.forEach(function(order) { %>
+          <tbody>
+              <tr>
+                <td><%= order[0].Id %></td>
+                <td><%= order[0].OrderNumber %></td>
+                <td><%= order[0].createdAt %></td>
+                <td><%= order[0].updatedAt %></td>
+                <td><%= order[0].UserId %></td>
+                <td><%= order[0].StatusId %></td>
+                <td><%= "Options here" %></td>
+                
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+              
+    </div>
+  </body>
+</html>

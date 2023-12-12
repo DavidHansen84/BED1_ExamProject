@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/stylesheets/navbar.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <h2 class="p-3"> Edit product details</h2>
+    
+            <h3>Id   <%= product.Id %></h3>
+
+            <form>
+                <label for="productName">Name</label>
+                <input type="text" id="productName" name="productName" value="<%= product.Name %>">
+            </form>
+            <form>
+                <label for="productDescription">Description</label>
+                <input type="text" id="productDescription" name="productDescription" value="<%= product.Description %>">
+            </form>
+            <form>
+                <label for="productQuantity">Quantity</label>
+                <input type="number" id="productQuantity" name="productQuantity" value="<%= product.Quantity %>">
+            </form>
+            <form>
+                <label for="productPrice">Price</label>
+                <input type="number" id="productPrice" name="productPrice" value="<%= product.Price %>">
+            </form>
+            <form>
+                <label for="productBrand">Brand</label>
+                <select id="productBrand" name="productBrand">
+                    <% brands.forEach(function(brand) { %>
+                        <option value="<%= brand.Id %>" <%= brand.Id === product.BrandId ? 'selected' : '' %>><%= brand.Name %></option>
+                    <% }); %>
+                </select>
+            </form>
+            <form>
+                <label for="productCategory">Category</label>
+                <select id="productCategory" name="productCategory">
+                    <% categories.forEach(function(category) { %>
+                        <option value="<%= category.Id %>" <%= category.Id === product.CategoryId ? 'selected' : '' %>><%= category.Name %></option>
+                    <% }); %>
+                </select>
+            </form>
+            <form>
+                <label for="productImageURL">Image URL</label>
+                <input type="text" id="productImageURL" name="productImageURL" value="<%= product.ImageURL %>">
+            </form>
+            <form>
+                <label for="productIsDeleted">Is Deleted</label>
+                <label class="switch">
+                    <input type="checkbox" id="productIsDeleted" name="productIsDeleted" <%= product.Active === 1 ? '' : 'checked' %>>
+                    <span class="slider round"></span>
+                </label>
+            </form>
+            
+            <button class="btn-sm btn-warning" onclick="captureValues()">Edit</button>
+
+    
+    <script>
+        async function captureValues() {
+            var newName = document.getElementById("productName").value;
+            var newDescription = document.getElementById("productDescription").value;
+            var newQuantity = document.getElementById("productQuantity").value;
+            var newPrice = document.getElementById("productPrice").value;
+            var newBrand = document.getElementById("productBrand").value;
+            var newCategory = document.getElementById("productCategory").value;
+            var newImageURL = document.getElementById("productImageURL").value;
+            var newIsDeleted = document.getElementById("productIsDeleted").checked ? 0 : 1;
+    
+            await editProduct(<%=product.Id%>, newName, newImageURL, newDescription, newPrice, newQuantity, newBrand, newCategory);
+        }
+    </script>
+    <script src="../../js/Products.js"></script>
+  </body>
+</html>

@@ -10,8 +10,8 @@ var productService = new ProductService(db);
 /* GET home page. */
 router.get('/', async function (req, res, next) {
   try {
-    let brand = await brandService.get();
-    res.status(200).json({ result: "Success", categories: brand });
+    let brands = await brandService.get();
+    res.status(200).json({ result: "Success", brands: brands });
   } catch (err) {
     res.status(400).json({ result: "Fail", error: "Error getting brand" });
   }
@@ -42,12 +42,14 @@ router.post('/add', isAuth, isAdmin, async function (req, res, next) {
 router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
   try {
     const BrandId = parseInt(req.params.id);
+    console.log(BrandId)
     const name = req.body.Name;
     if (!name) {
       res.status(400).json({ result: "Fail", error: "Name not provided" })
       return res.end();
     }
-    if (BrandId == null) {
+    if (BrandId == null || isNaN(BrandId)) {
+      
       res.status(400).json({ result: "Fail", error: "Error getting brand id" })
       return res.end();
     }

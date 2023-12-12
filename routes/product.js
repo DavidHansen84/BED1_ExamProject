@@ -12,19 +12,22 @@ var CategoryService = require('../services/CategoryService');
 var categoryService = new CategoryService(db);
 var BrandService = require('../services/BrandService');
 var brandService = new BrandService(db);
+var bodyParser = require('body-parser')
+var jsonParser = bodyParser.json();
 
 
 // TODO add search, add isAdmin, add try{} error handling
 
 // GET all the products
-router.get('/', async function (req, res, next) {
+router.get('/', jsonParser, async function (req, res, next) {
   let products = await productService.get();
-  
-  res.status(200).json({ result: "Success", products: products });
+  let brands = await brandService.get();
+  let categories = await categoryService.get();
+  res.status(200).json({ result: "Success", products: products, brands: brands, categories: categories });
 });
 
 // GET products in user cart
-router.get('/cart', isAuth, async function (req, res, next) {
+router.get('/cart', jsonParser, isAuth, async function (req, res, next) {
   let totalPrice = 0
   try {
   
@@ -69,7 +72,7 @@ router.get('/cart', isAuth, async function (req, res, next) {
 });
 
 // POST to add product to user cart
-router.post('/add/cart', isAuth, async function (req, res, next) {
+router.post('/add/cart', jsonParser, isAuth, async function (req, res, next) {
   const { cartName, productId, quantity } = req.body
   const userId = req.user.id;
   if (userId == null) {
@@ -93,7 +96,7 @@ router.post('/add/cart', isAuth, async function (req, res, next) {
     cart = await cartService.create(cartName, userId)
   }
   if (cart.Active == 0) {
-    res.status(400).json({ result: "Fail", message: "This cart is inactive. Chose a diffrent name" });
+    res.status(400).json({ result: "Fail", message: "This cart is inactive. Chose a diffrent cart or create a new one" });
     return res.end();
   }
   let product = await productService.getOne(productId);
@@ -129,7 +132,7 @@ router.post('/add/cart', isAuth, async function (req, res, next) {
 });
 
 // DELETE to remove product from user cart
-router.delete('/del/cart', isAuth, async function (req, res, next) {
+router.delete('/del/cart', jsonParser, isAuth, async function (req, res, next) {
   const { cartName, productId, quantity } = req.body
   const userId = req.user.id;
   if (userId == null) {
@@ -157,10 +160,11 @@ router.delete('/del/cart', isAuth, async function (req, res, next) {
 });
 
 // POST to add product ADMIN ONLY -- need isAdmin
-router.post('/add', isAuth, isAdmin, async function (req, res, next) {
+router.post('/add', jsonParser, isAuth, isAdmin, async function (req, res, next) {
   let brandExists
   let categoryExists
   const { Name, ImageURL, Description, Price, Quantity, Brand, Category } = req.body;
+  console.log(req.body)
   if (!Name) {
     res.status(400).json({
       result: "Fail", error: "Name must be provided"
@@ -262,12 +266,13 @@ router.post('/add', isAuth, isAdmin, async function (req, res, next) {
 });
 
 // PUT to update product ADMIN ONLY -- need isAdmin
-router.put('/edit/:id', isAuth, isAdmin, async function (req, res, next) {
+router.put('/edit/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
   let brandExists
   let categoryExists
   const productId = parseInt(req.params.id);
   console.log(productId);
   const { Name, ImageURL, Description, Price, Quantity, Brand, Category } = req.body;
+  console.log(req.body)
   if (!productId) {
     res.status(400).json({
       result: "Fail", error: "id must be provided in the parameters"
@@ -375,7 +380,7 @@ router.put('/edit/:id', isAuth, isAdmin, async function (req, res, next) {
 });
 
 // PUT to activate a product ADMIN ONLY need isAdmin
-router.put('/activate/:id', isAuth, isAdmin, async function (req, res, next) {
+router.put('/activate/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
   const productId = parseInt(req.params.id);
   if (!productId) {
     res.status(400).json({
@@ -399,11 +404,11 @@ router.put('/activate/:id', isAuth, isAdmin, async function (req, res, next) {
   }
   await productService.activate(productId);
   productExist = await productService.getOne(productId)
-  res.status(400).json({result: "Success", activatedProduct: productExist, message: "This product has been made active"})
+  res.status(200).json({result: "Success", activatedProduct: productExist, message: "This product has been made active"})
 });
 
 // DELETE to soft-delete product ADMIN ONLY -- need isAdmin
-router.delete('/delete/:id', isAuth, isAdmin, async function (req, res, next) {
+router.delete('/delete/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
   const productId = parseInt(req.params.id);
   if (!productId) {
     res.status(400).json({
@@ -420,14 +425,12 @@ router.delete('/delete/:id', isAuth, isAdmin, async function (req, res, next) {
     return res.end();
   }
   if (productExist[0].Active === 0) {
-    res.status(400).json({
-      result: "Fail", error: "Product is already deleted", deletedProduct: productExist
-    })
+    res.status(400).json({ result: "Fail", error: "Product is already deleted", deletedProduct: productExist })
     return res.end();
   }
   await productService.delete(productId);
   productExist = await productService.getOne(productId)
-  res.status(400).json({result: "Success", deletedProduct: productExist, message: "This product has been deleted"})
+  res.status(200).json({result: "Success", deletedProduct: productExist, message: "This product has been deleted"})
 });
 
 module.exports = router;

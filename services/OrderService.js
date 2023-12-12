@@ -5,7 +5,7 @@ class OrderService {
     }
 
 
-    async create(Name, UserId, status, orderNumber, membershipStatus ) {
+    async create(Name, UserId, status, orderNumber, membershipId ) {
         return this.Order.create(
             {
                 Name: Name,
@@ -38,7 +38,17 @@ class OrderService {
         })
     }
 
-    async getAll() {
+    async getAll(userId) {
+        return this.Order.findAll({
+            where: { 
+                UserId: userId
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
+    async getAllOrders() {
         return this.Order.findAll({
             where: { 
             }
@@ -47,7 +57,12 @@ class OrderService {
         })
     }
 
-    
+    async update(OrderNumber, StatusId) {
+        return this.Order.update(
+            {
+                StatusId: StatusId,
+            }, { where: { OrderNumber: OrderNumber } });
+    }    
 
 }
 

@@ -13,6 +13,7 @@ var jsonParser = bodyParser.json();
 const { isAuth } = require('../middleware/middleware');
 var jwt = require('jsonwebtoken');
 const validator = require('email-validator');
+var axios = require("axios");
 
 let role
 
@@ -45,9 +46,7 @@ router.post("/login", jsonParser, async (req, res, next) => {
               return res.status(400).json({status: "error", error: "Incorrect email or password"});
           }
           let token;
-          
           try {
-            
             console.log(role)
             token = jwt.sign(
               { id: data.Id, email: data.email, role: role },

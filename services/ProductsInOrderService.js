@@ -35,6 +35,17 @@ class ProductsInOrderService {
         })
     }
 
+    async getOneId(OrderId) {
+        return this.ProductsInOrder.findOne({
+            where: { 
+                OrderId: OrderId,
+                
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
     async getAll(OrderId) {
         return this.ProductsInOrder.findAll({
             where: { 
