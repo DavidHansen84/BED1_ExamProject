@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/stylesheets/navbar.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <h2 class="p-3"> Edit product details</h2>
+    
+            <h3>Id   <%= user.Id %></h3>
+
+            <form>
+                <label for="Email">Email</label>
+                <input type="text" id="Email" name="Email" value="<%= user.email %>">
+            </form>
+            <form>
+                <label for="firstName">First Name</label>
+                <input type="text" id="firstName" name="firstName" value="<%= user.firstName %>">
+            </form>
+            <form>
+                <label for="lastName">Last Name</label>
+                <input type="text" id="lastName" name="lastName" value="<%= user.lastName %>">
+            </form>
+            <form>
+                <label for="Username">Username</label>
+                <input type="text" id="Username" name="Username" value="<%= user.username %>">
+            </form>
+            <form>
+                <label for="userRole">Role</label>
+                <select id="userRole" name="userRole">
+                    <% roles.forEach(function(role) { %>
+                        <option value="<%= role.Id %>" <%= role.Id === user.RoleId ? 'selected' : '' %>><%= role.Name %></option>
+                    <% }); %>
+                </select>
+            </form>
+            <form>
+                <label for="telephoneNumber">Telephone Number</label>
+                <input type="text" id="telephoneNumber" name="telephoneNumber" value="<%= user.telephoneNumber %>">
+            </form>
+            
+            
+            <button class="btn-sm btn-warning" onclick="captureValues()">Edit</button>
+
+    
+    <script>
+        async function captureValues() {
+            var newEmail = document.getElementById("Email").value;
+            var newFirstName = document.getElementById("firstName").value;
+            var newLastName = document.getElementById("lastName").value;
+            var newUsername = document.getElementById("Username").value;
+            var newRole = document.getElementById("userRole").value;
+            var newTelephonenumber = document.getElementById("telephoneNumber").value;
+            
+            await editUser(<%=user.Id%>, newEmail, newFirstName, newLastName, newRole, newUsername, newTelephonenumber);
+        }
+    </script>
+    <script src="../../js/Users.js"></script>
+  </body>
+</html>

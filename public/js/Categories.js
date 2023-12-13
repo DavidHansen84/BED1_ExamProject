@@ -1,6 +1,5 @@
-
-async function deleteProduct(id) {
-    let url = 'http://localhost:3000/products/delete/'
+async function deleteCategory(id) {
+    let url = 'http://localhost:3000/categories/delete/'
         await fetch(url + id, {
         method: 'DELETE',
         headers: {
@@ -10,7 +9,7 @@ async function deleteProduct(id) {
         })
     }).then((response) => {
         if (response.ok) {
-            const resData = 'Deleted product';
+            const resData = 'Deleted category';
             location.reload()
             return Promise.resolve(resData);
         }
@@ -22,49 +21,19 @@ async function deleteProduct(id) {
       });;
 }
 
-async function activateProduct(id) {
-    let url = 'http://localhost:3000/products/activate/'
+async function editCategory(id, Name) {
+    let url = 'http://localhost:3000/categories/change/'
         await fetch(url + id, {
         method: 'PUT',
         headers: {
             'Content-type': 'application/json'
         },
         body: JSON.stringify({
+            Name: Name
         })
     }).then((response) => {
         if (response.ok) {
-            const resData = 'Activated product';
-            location.reload()
-            return Promise.resolve(resData);
-        }
-        return Promise.reject(response);
-    })
-      .catch((response) => {
-        
-        alert(response.statusText);
-      });;
-}
-
-async function editProduct(id, Name, ImageURL, Description, Price, Quantity, Brand, Category) {
-    let url = 'http://localhost:3000/products/edit/'
-    console.log(Name, ImageURL, Description, Price, Quantity, Brand, Category)
-        await fetch(url + id, {
-        method: 'PUT',
-        headers: {
-            'Content-type': 'application/json'
-        },
-        body: JSON.stringify({
-            Name: Name, 
-            ImageURL: ImageURL, 
-            Description: Description, 
-            Price: Price, 
-            Quantity: Quantity, 
-            Brand: Brand, 
-            Category: Category
-        })
-    }).then((response) => {
-        if (response.ok) {
-            const resData = 'Edited product';
+            const resData = 'Edited category';
             window.close();
             opener.location.reload()
             return Promise.resolve(resData);
@@ -80,7 +49,7 @@ async function editProduct(id, Name, ImageURL, Description, Price, Quantity, Bra
 }
 
 async function editButton(id) {
-    let url = 'http://localhost:3000/admin/editProduct/'
+    let url = 'http://localhost:3000/admin/editcategory/'
     console.log(url)
         await fetch(url + id, {
         method: 'GET',
@@ -89,10 +58,8 @@ async function editButton(id) {
         }    
     }).then((response) => {
         if (response.ok) {
-            console.log("success")
-            const resData = 'Edit product page';
+            const resData = 'Edit category page';
             window.open(url + id,'_blank', 'width=500px, height=500px')
-            console.log("success")
             return Promise.resolve(resData);
         }
         console.log("fail")

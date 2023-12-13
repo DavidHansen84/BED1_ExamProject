@@ -6,6 +6,8 @@ var UserService = require("../services/UserService")
 var userService = new UserService(db);
 var RoleService = require('../services/RoleService');
 var roleService = new RoleService(db);
+var StatusService = require('../services/StatusService');
+var statusService = new StatusService(db);
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json();
 const { isAuth, isAdmin } = require('../middleware/middleware');
@@ -74,22 +76,24 @@ router.get('/products', isAuth, isAdmin, async function(req, res, next) {
   res.render('products', { title: 'Products', products: data.products, brands: data.brands, categories: data.categories});
 });
 
-router.get('/editProducts/:id', isAuth, isAdmin, async function(req, res, next) {
-  console.log('Request Headers:', req.headers.cookies);
+router.get('/editProduct/:id', isAuth, isAdmin, async function(req, res, next) {
   const response = await axios.get("http://localhost:3000/products");
   let productId = req.params.id;
-  console.log(productId)
   let data = response.data;
-  console.log(data.products)
-  console.log(data.products[productId - 1])
-  res.render('editProducts', { title: 'Products', product: data.products[productId - 1], brands: data.brands, categories: data.categories});
+  res.render('editProduct', { title: 'Product', product: data.products[productId - 1], brands: data.brands, categories: data.categories});
 });
 
 router.get('/brands', isAuth, isAdmin, async function(req, res, next) {
   const response = await axios.get("http://localhost:3000/brands");
   let data = response.data;
-  console.log(data.brands)
   res.render('brands', { title: 'Express', brands: data.brands});
+});
+
+router.get('/editBrand/:id', isAuth, isAdmin, async function(req, res, next) {
+  const response = await axios.get("http://localhost:3000/brands");
+  let brandId = req.params.id;
+  let data = response.data;
+  res.render('editBrand', { title: 'Brand', brand: data.brands[brandId - 1]});
 });
 
 router.get('/categories', isAuth, isAdmin, async function(req, res, next) {
@@ -97,6 +101,13 @@ router.get('/categories', isAuth, isAdmin, async function(req, res, next) {
   let data = response.data;
   console.log(data.categories)
   res.render('categories', { title: 'Express', categories: data.categories});
+});
+
+router.get('/editCategory/:id', isAuth, isAdmin, async function(req, res, next) {
+  const response = await axios.get("http://localhost:3000/categories");
+  let categoryId = req.params.id;
+  let data = response.data;
+  res.render('editCategory', { title: 'Brand', category: data.categories[categoryId - 1]});
 });
 
 router.get('/roles', isAuth, isAdmin, async function(req, res, next) {
@@ -113,11 +124,26 @@ router.get('/users', isAuth, isAdmin, async function(req, res, next) {
   res.render('users', { title: 'Express', users: data.users, memberships: data.memberships, roles: data.roles });
 });
 
+router.get('/editUser/:id', isAuth, isAdmin, async function(req, res, next) {
+  const response = await axios.get("http://localhost:3000/users");
+  let userId = req.params.id;
+  let data = response.data;
+  let roles = await roleService.getAll();
+  res.render('editUser', { title: 'User', user: data.users[userId - 1], roles: roles});
+});
+
 router.get('/orders', isAuth, isAdmin, async function(req, res, next) {
   const response = await axios.get("http://localhost:3000/orders/all");
   let data = response.data;
-  console.log(data.Orders)
-  res.render('orders', { title: 'Express', orders: data.Orders});
+  res.render('orders', { title: 'Express', orders: data.Orders, status: data.status});
+});
+
+router.get('/editOrder/:id', isAuth, isAdmin, async function(req, res, next) {
+  const response = await axios.get("http://localhost:3000/orders/orders");
+  let orderId = req.params.id;
+  let data = response.data;  
+  let statuses = await statusService.get()
+  res.render('editOrders', { title: 'Orders', order: data.orders[orderId - 1], statuses: statuses});
 });
 
 module.exports = router;

@@ -18,7 +18,8 @@ var UserService = require("../services/UserService")
 var userService = new UserService(db);
 var MembershipService = require('../services/MembershipService');
 var membershipService = new MembershipService(db);
-var crypto = require('crypto')
+var crypto = require('crypto');
+const { stat } = require('fs/promises');
 
 async function createOrderNumber() {
   // sadly I had to use ChatGPT to fix the code I had here :(
@@ -187,6 +188,7 @@ router.get('/all/one', isAuth, isAdmin, async function (req, res, next) {
 router.get('/all', async function (req, res, next) {
   let OrdersAndProducts = [];
   try {
+    let status = await statusService.get();
     let orders = await orderService.getAllOrders();
     if (orders == null) {
       res.status(400).json({ result: "Fail", message: "Order does not exist" });
@@ -201,7 +203,24 @@ router.get('/all', async function (req, res, next) {
       OrdersAndProducts.push(orderAndProducts);
     }
 
-    res.status(200).json({ result: "Success", Orders: OrdersAndProducts });
+    res.status(200).json({ result: "Success", Orders: OrdersAndProducts, status: status });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({
+      status: "error",
+      error: "Internal Server Error",
+    });
+  }
+});
+
+router.get('/orders', async function (req, res, next) {
+  try {
+    let orders = await orderService.getAllOrders();
+    if (orders == null) {
+      res.status(400).json({ result: "Fail", message: "Order does not exist" });
+      return res.end();
+    }
+    res.status(200).json({ result: "Success", orders: orders});
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({
@@ -341,7 +360,13 @@ router.put('/update', isAuth, isAdmin, async function (req, res, next) {
     res.status(400).json({ status: "error", error: "newStatus must be provided" });
       return res.end();
   }
-  const status = await statusService.getOne(newStatus);
+  const orderExists = await orderService.getOrderNumber(orderNumber);
+    if (orderExists === null) {
+      res.status(400).json({ result: "Fail", error: "Order does not exist" })
+      return res.end();
+    }
+    console.log(orderExists)
+  const status = await statusService.getOneId(newStatus);
   if (status == null) {
     res.status(400).json({ status: "error", error: "Error getting the status" });
       return res.end();

@@ -23,6 +23,15 @@ class StatusService {
             return (err)
         })
     }
+    async getOneId(status) {
+        return this.Status.findOne({
+            where: { 
+                Id: status,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
 
 
     async get() {

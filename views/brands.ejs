@@ -27,13 +27,18 @@
               <tr>
                 <td><%= brand.Id %></td>
                 <td><%= brand.Name %></td>
-                <td><%= "Options here" %></td>
+                <td>
+                  <button class="btn-sm btn-danger" onclick="deleteBrand(<%=brand.Id%>)">Delete</button>
+                  
+                    <button class="btn-sm btn-warning" onclick="editButton(<%=brand.Id%>)">Edit</button></td>
+                
+              </tr>
                 
               </tr>
             <% }); %>
           </tbody>
         </table>
-              
     </div>
+    <script src="../js/brands.js"></script>
   </body>
 </html>

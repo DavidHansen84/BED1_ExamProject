@@ -70,6 +70,12 @@
             var newCategory = document.getElementById("productCategory").value;
             var newImageURL = document.getElementById("productImageURL").value;
             var newIsDeleted = document.getElementById("productIsDeleted").checked ? 0 : 1;
+            
+            if(newIsDeleted == 1){
+                await activateProduct(<%=product.Id%>);
+            } else {
+                await deleteProduct(<%=product.Id%>);
+            }
     
             await editProduct(<%=product.Id%>, newName, newImageURL, newDescription, newPrice, newQuantity, newBrand, newCategory);
         }

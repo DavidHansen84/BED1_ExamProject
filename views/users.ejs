@@ -40,7 +40,9 @@
                 <td><%= user.telephoneNumber %></td>
                 <td><%= roles[user.RoleId -1].Name %></td>
                 <td><%= memberships[user.MembershipId - 1].Name %></td>
-                <td><%= "Options here" %></td>
+                <td><button class="btn-sm btn-warning" onclick="editButton(<%=user.Id%>)">Edit</button></td>
+                
+              </tr>
                 
               </tr>
             <% }); %>
@@ -48,5 +50,6 @@
         </table>
               
     </div>
+    <script src="../js/Users.js"></script>
   </body>
 </html>

@@ -36,6 +36,18 @@ class UserService {
             }, { where: { Id: Id } });
     }
 
+    async update(Id, email, firstName, lastName, role, username, telephoneNumber) {
+        return this.User.update(
+            {
+                email: email,
+                firstName: firstName,
+                lastName: lastName,
+                RoleId: role,
+                username: username,
+                telephoneNumber: telephoneNumber
+            }, { where: { Id: Id } });
+    }
+
 
     async get() {
         return this.User.findAll({

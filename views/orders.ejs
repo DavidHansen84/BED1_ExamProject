@@ -32,8 +32,8 @@
                 <td><%= order[0].createdAt %></td>
                 <td><%= order[0].updatedAt %></td>
                 <td><%= order[0].UserId %></td>
-                <td><%= order[0].StatusId %></td>
-                <td><%= "Options here" %></td>
+                <td><%= status[order[0].StatusId -1].Name %></td>
+                <td><button class="btn-sm btn-warning" onclick="editButton(<%=order[0].Id%>)">Edit</button></td>
                 
               </tr>
             <% }); %>
@@ -41,5 +41,6 @@
         </table>
               
     </div>
+    <script src="../js/Orders.js"></script>
   </body>
 </html>

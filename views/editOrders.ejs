@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/stylesheets/navbar.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <h2 class="p-3"> Edit order details</h2>
+    
+            <h3>Id   <%= order.Id %></h3>
+            <h3> Order Number <%= order.OrderNumber%> </h3>
+
+         
+                
+            <form>
+                <label for="StatusName">Status</label>
+                <select id="StatusName" name="StatusName">
+                    <% statuses.forEach(function(status) { %>
+                        <option value="<%= status.Id %>" <%= status.Id === order.StatusId ? 'selected' : '' %>><%= status.Name %></option>
+                    <% }); %>
+                </select>
+            </form>
+            
+            <button class="btn-sm btn-warning" onclick="captureValues()">Edit</button>
+
+    
+    <script>
+        async function captureValues() {
+            var newStatus = document.getElementById("StatusName").value;
+
+            await editOrder(<%=order.OrderNumber%>, newStatus);
+        }
+    </script>
+    <script src="../../js/Products.js"></script>
+  </body>
+</html>

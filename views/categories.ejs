@@ -26,7 +26,12 @@
               <tr>
                 <td><%= category.Id %></td>
                 <td><%= category.Name %></td>
-                <td><%= "Options here" %></td>
+                <td>
+                  <button class="btn-sm btn-danger" onclick="deleteCategory(<%=category.Id%>)">Delete</button>
+                  
+                    <button class="btn-sm btn-warning" onclick="editButton(<%=category.Id%>)">Edit</button></td>
+                
+              </tr>
                 
               </tr>
             <% }); %>
@@ -34,5 +39,6 @@
         </table>
               
     </div>
+    <script src="../js/Categories.js"></script>
   </body>
 </html>

@@ -270,9 +270,7 @@ router.put('/edit/:id', jsonParser, isAuth, isAdmin, async function (req, res, n
   let brandExists
   let categoryExists
   const productId = parseInt(req.params.id);
-  console.log(productId);
   const { Name, ImageURL, Description, Price, Quantity, Brand, Category } = req.body;
-  console.log(req.body)
   if (!productId) {
     res.status(400).json({
       result: "Fail", error: "id must be provided in the parameters"
@@ -397,8 +395,8 @@ router.put('/activate/:id', jsonParser, isAuth, isAdmin, async function (req, re
     return res.end();
   }
   if (productExist[0].Active === 1) {
-    res.status(400).json({
-      result: "Fail", error: "Product is already active", activatedProduct: productExist
+    res.status(200).json({
+      result: "Success", message: "Product is already active", activatedProduct: productExist
     })
     return res.end();
   }
@@ -425,7 +423,7 @@ router.delete('/delete/:id', jsonParser, isAuth, isAdmin, async function (req, r
     return res.end();
   }
   if (productExist[0].Active === 0) {
-    res.status(400).json({ result: "Fail", error: "Product is already deleted", deletedProduct: productExist })
+    res.status(200).json({ result: "Success", message: "Product is already deleted", deletedProduct: productExist })
     return res.end();
   }
   await productService.delete(productId);
