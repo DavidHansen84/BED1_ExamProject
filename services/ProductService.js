@@ -73,7 +73,7 @@ class ProductService {
         return this.Product.findAll({
             where: {
             }
-        }).catch( err => {
+        }).catch(err => {
             return (err)
         })
     }
@@ -83,7 +83,7 @@ class ProductService {
             where: {
                 Id: productId
             }
-        }).catch( err => {
+        }).catch(err => {
             return (err)
         })
     }
@@ -93,7 +93,7 @@ class ProductService {
             where: {
                 CategoryId: categoryId
             }
-        }).catch( err => {
+        }).catch(err => {
             return (err)
         })
     }
@@ -103,7 +103,7 @@ class ProductService {
             where: {
                 BrandId: BrandId
             }
-        }).catch( err => {
+        }).catch(err => {
             return (err)
         })
     }
@@ -113,7 +113,7 @@ class ProductService {
             where: {
                 Name: name
             }
-        }).catch( err => {
+        }).catch(err => {
             return (err)
         })
     }
@@ -130,6 +130,27 @@ class ProductService {
             {
                 Active: 1,
             }, { where: { Id: Id } });
+    }
+
+    async fullDelete(Id) {
+        return this.Product.destroy({
+            where: {
+                Id: Id
+            }
+        }).catch(err => {
+            return (err)
+        })
+    }
+
+    async searchProduct(query) {
+        try {
+
+            return await this.client.query(query);
+
+        } catch (error) {
+            console.error('Error running query:', error);
+        }
+
     }
 
 }

@@ -1,4 +1,3 @@
-
 async function editUser(id, email, firstName, lastName, role, username, telephoneNumber) {
     let url = 'http://localhost:3000/users/edit/'
         await fetch(url + id, {
@@ -21,7 +20,6 @@ async function editUser(id, email, firstName, lastName, role, username, telephon
             opener.location.reload()
             return Promise.resolve(resData);
         }
-        console.log("fail")
         const errorData = response.json();
         return Promise.reject(errorData);
     })
@@ -41,13 +39,10 @@ async function editButton(id) {
         }    
     }).then((response) => {
         if (response.ok) {
-            console.log("success")
             const resData = 'Edit product page';
             window.open(url + id,'_blank', 'width=500px, height=500px')
-            console.log("success")
             return Promise.resolve(resData);
         }
-        console.log("fail")
         return Promise.reject(response);
     })
       .catch((response) => {

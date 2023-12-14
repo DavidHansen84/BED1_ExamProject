@@ -209,6 +209,9 @@ async function createAdmin(res) {
 
 /* Populate Products table */
 router.post('/', async function (req, res, next) {
+    // #swagger.tags = ['Init']
+    // #swagger.description = "Gets all the products from the Noroff API, populates the database with all the info and creates a Admin user"
+    // #swagger.produces = ['text/html']
     try {
         await fetchProducts();
         await getCategory(products, res);
@@ -223,10 +226,7 @@ router.post('/', async function (req, res, next) {
 
     } catch (error) {
         console.error("Error:", error);
-        res.status(500).json({
-            status: "error",
-            error: "Internal Server Error",
-        });
+        res.status(500).json({ status: "error", error: "Error populating the database", });
     }
 
 

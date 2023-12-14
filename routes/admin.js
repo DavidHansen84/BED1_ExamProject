@@ -24,7 +24,9 @@ async function getRole(RoleId) {
 }
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "Post for registered users to be able to login"
+    // #swagger.produces = ['text/html']
   res.render('login', { title: 'Products'});
 });
 
@@ -70,80 +72,195 @@ router.post("/login", jsonParser, async (req, res, next) => {
 });
 
 router.get('/products', isAuth, isAdmin, async function(req, res, next) {
-  console.log('Request Headers:', req.headers.cookies);
-  const response = await axios.get("http://localhost:3000/products");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "See all the products"
+    // #swagger.produces = ['text/html']
+  try {
+    const response = await axios.get("http://localhost:3000/products");
   let data = response.data;
   res.render('products', { title: 'Products', products: data.products, brands: data.brands, categories: data.categories});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error getting product" })
+}
+});
+
+router.get('/admin/products/search', isAuth, isAdmin, async function (req, res, next) {
+  try {
+      const { productSearch, categorySearch, brandSearch } = req.query;
+      console.log(productSearch, categorySearch, brandSearch);
+
+      // Perform your search logic here using the received parameters
+
+      res.render('products', { title: 'Products', products: data.products, brands: data.brands, categories: data.categories });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ result: "Fail", error: "Error getting product" });
+  }
 });
 
 router.get('/editProduct/:id', isAuth, isAdmin, async function(req, res, next) {
-  const response = await axios.get("http://localhost:3000/products");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "Admin page to edit the products"
+    // #swagger.produces = ['text/html']
+  try { 
+    const response = await axios.get("http://localhost:3000/products");
   let productId = req.params.id;
   let data = response.data;
   res.render('editProduct', { title: 'Product', product: data.products[productId - 1], brands: data.brands, categories: data.categories});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error editing product" })
+}
+});
+
+router.get('/add', isAuth, isAdmin, async function(req, res, next) {
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "Admin page to edit the products"
+    // #swagger.produces = ['text/html']
+  try { 
+    const response = await axios.get("http://localhost:3000/products");
+  let data = response.data;
+  res.render('addProduct', { title: 'Product', brands: data.brands, categories: data.categories});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error editing product" })
+}
 });
 
 router.get('/brands', isAuth, isAdmin, async function(req, res, next) {
-  const response = await axios.get("http://localhost:3000/brands");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "See all the brands"
+    // #swagger.produces = ['text/html']
+  try {
+    const response = await axios.get("http://localhost:3000/brands");
   let data = response.data;
   res.render('brands', { title: 'Express', brands: data.brands});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error getting brand" })
+}
 });
 
 router.get('/editBrand/:id', isAuth, isAdmin, async function(req, res, next) {
-  const response = await axios.get("http://localhost:3000/brands");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "Admin page to edit the brands"
+    // #swagger.produces = ['text/html']
+  try {
+    const response = await axios.get("http://localhost:3000/brands");
   let brandId = req.params.id;
   let data = response.data;
   res.render('editBrand', { title: 'Brand', brand: data.brands[brandId - 1]});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error editing brand" })
+}
 });
 
 router.get('/categories', isAuth, isAdmin, async function(req, res, next) {
-  const response = await axios.get("http://localhost:3000/categories");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "See all the categories"
+    // #swagger.produces = ['text/html']
+  try {
+    const response = await axios.get("http://localhost:3000/categories");
   let data = response.data;
   console.log(data.categories)
   res.render('categories', { title: 'Express', categories: data.categories});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error getting categories" })
+}
 });
 
 router.get('/editCategory/:id', isAuth, isAdmin, async function(req, res, next) {
-  const response = await axios.get("http://localhost:3000/categories");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "Admin page to edit the categories"
+    // #swagger.produces = ['text/html']
+  try {
+    const response = await axios.get("http://localhost:3000/categories");
   let categoryId = req.params.id;
   let data = response.data;
   res.render('editCategory', { title: 'Brand', category: data.categories[categoryId - 1]});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error editing categories" })
+}
 });
 
 router.get('/roles', isAuth, isAdmin, async function(req, res, next) {
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "See all the roles"
+    // #swagger.produces = ['text/html']
+    try {
   const response = await axios.get("http://localhost:3000/roles");
   let data = response.data;
   console.log(data.roles)
   res.render('roles', { title: 'Express', roles: data.roles});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error getting roles" })
+}
 });
 
 router.get('/users', isAuth, isAdmin, async function(req, res, next) {
-  const response = await axios.get("http://localhost:3000/users");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "See all the users"
+    // #swagger.produces = ['text/html']
+  try {
+    const response = await axios.get("http://localhost:3000/users");
   let data = response.data;
   console.log(data.memberships[0])
   res.render('users', { title: 'Express', users: data.users, memberships: data.memberships, roles: data.roles });
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error getting users" })
+}
 });
 
 router.get('/editUser/:id', isAuth, isAdmin, async function(req, res, next) {
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "Admin page to edit the users"
+    // #swagger.produces = ['text/html']
+    try {
   const response = await axios.get("http://localhost:3000/users");
   let userId = req.params.id;
   let data = response.data;
   let roles = await roleService.getAll();
   res.render('editUser', { title: 'User', user: data.users[userId - 1], roles: roles});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error editing users" })
+}
 });
 
 router.get('/orders', isAuth, isAdmin, async function(req, res, next) {
-  const response = await axios.get("http://localhost:3000/orders/all");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "See all the orders"
+    // #swagger.produces = ['text/html']
+  try {
+    const response = await axios.get("http://localhost:3000/orders/all");
   let data = response.data;
   res.render('orders', { title: 'Express', orders: data.Orders, status: data.status});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error getting orders" })
+}
 });
 
 router.get('/editOrder/:id', isAuth, isAdmin, async function(req, res, next) {
-  const response = await axios.get("http://localhost:3000/orders/orders");
+  // #swagger.tags = ['Admin']
+    // #swagger.description = "Admin page to edit the orders"
+    // #swagger.produces = ['text/html']
+  try {
+    const response = await axios.get("http://localhost:3000/orders/orders");
   let orderId = req.params.id;
   let data = response.data;  
   let statuses = await statusService.get()
   res.render('editOrders', { title: 'Orders', order: data.orders[orderId - 1], statuses: statuses});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error editing order" })
+}
 });
 
 module.exports = router;

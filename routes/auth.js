@@ -28,7 +28,8 @@ router.post("/login", jsonParser, async (req, res, next) => {
   // #swagger.tags = ['Auth']
     // #swagger.description = "Post for registered users to be able to login"
     // #swagger.produces = ['text/html']
-    const { Email, Password } = req.body;
+    try {
+      const { Email, Password } = req.body;
     if (Email == null) {
       return res.status(400).json({status: "error", error: "Email is required."});
     }
@@ -59,6 +60,10 @@ router.post("/login", jsonParser, async (req, res, next) => {
           res.status(200).json({status: "success" , result: "You are logged in", id: data.Id, email: data.email, role: role, token: token});
         });
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ result: "Fail", error: "Error logging in" })
+  }
 });
 
 // Post for new users to register / signup
@@ -66,7 +71,8 @@ router.post("/register", async (req, res, next) => {
   // #swagger.tags = ['Auth']
     // #swagger.description = "Post for new users to register / signup"
     // #swagger.produces = ['text/html']
-    const { Username, Password, Email, FirstName, LastName, Address, Telephone } = req.body;
+    try{
+      const { Username, Password, Email, FirstName, LastName, Address, Telephone } = req.body;
     if (Username == null) {
       return res.status(400).json({status: "error", error: "Username is required."});
     }
@@ -119,12 +125,17 @@ router.post("/register", async (req, res, next) => {
       userService.create(Username, hashedPassword, Email, FirstName, LastName, Address, Telephone, salt, membership.Id, role.Id)
       res.status(200).json({status: "success", result: "You created an account."});
     });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ result: "Fail", error: "Error registrering user" })
+  }
 });
 
 router.delete("/delete", isAuth, jsonParser, async (req, res, next) => {
   // #swagger.tags = ['Auth']
     // #swagger.description = "Deletes user, needs to be signed in"
     // #swagger.produces = ['text/html']
+    try {
   let userEmail = req.body.email;
   if (userEmail == null) {
     return res.status(400).json({status: "error", error: "Email is required."});
@@ -135,6 +146,10 @@ router.delete("/delete", isAuth, jsonParser, async (req, res, next) => {
   }
   await userService.deleteUser(userEmail);
   res.status(200).json({result: "You deleted account " + userEmail +  "."});
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Fail", error: "Error deleting user" })
+}
 })
 
 

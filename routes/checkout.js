@@ -41,6 +41,9 @@ async function checkOrderNumber(orderNumber) {
 
 // GET the users cart
 router.get('/', isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Checkout']
+    // #swagger.description = "Gets a users carts"
+    // #swagger.produces = ['text/html']
   let totalPrice = 0
   try {
 
@@ -76,15 +79,15 @@ router.get('/', isAuth, async function (req, res, next) {
     res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC, TotalPrice: totalPrice });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({ status: "error", error: "Error getting the users cart", });
   }
 });
 
 // POST to add product to user cart
 router.post('/add/cart', isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Checkout']
+    // #swagger.description = "Adds a product to the users cart"
+    // #swagger.produces = ['text/html']
   const { cartName, productId, quantity } = req.body
   const userId = req.user.id;
   try {
@@ -120,7 +123,6 @@ router.post('/add/cart', isAuth, async function (req, res, next) {
     return res.status(400).json({ status: "error", error: "Product does not exist" });
   }
 
-
   let PIC = await productsInCartService.getOne(cart.Id, productId)
   if (!PIC) {
     if ( product[0].Quantity < quantity) {
@@ -145,15 +147,15 @@ router.post('/add/cart', isAuth, async function (req, res, next) {
   }
 }} catch (error) {
   console.error("Error:", error);
-  res.status(500).json({
-    status: "error",
-    error: "Internal Server Error",
-  });
+  res.status(500).json({ status: "error",  error: "Error adding product to cart",  });
 }
 });
 
 // POST add cart to the order
 router.post('/now', isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Checkout']
+    // #swagger.description = "Puts a cart into a order and deactivates the cart"
+    // #swagger.produces = ['text/html']
   // could not remember the full way to do this so found this here - https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
   let orderNumber = await createOrderNumber();
   let totalPrice = 0;
@@ -238,8 +240,6 @@ router.post('/now', isAuth, async function (req, res, next) {
       totalQuantity = totalQuantity + Quantity;
     }
     
-    
-
     await userService.updatePurchases(userId, totalQuantity)
     user = await userService.getOne(req.user.email);
     if (user.purchases < 15) {
@@ -263,15 +263,15 @@ router.post('/now', isAuth, async function (req, res, next) {
     res.status(200).json({ result: "Success", Order: order, ProductsInOrder: PIO, TotalPrice: totalPrice, DiscountTotal: discountTotal, OrderNumber: orderNumber, MembershiStatus: membership.Name });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({  status: "error", error: "Error adding the cart to order",});
   }
 });
 
 //PUT to update the quantity of a product in the cart
 router.put('/add/cart', isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Checkout']
+    // #swagger.description = "Updates the quantity of a product in a cart"
+    // #swagger.produces = ['text/html']
   const { cartName, productId, quantity } = req.body
   const userId = req.user.id;
   try {
@@ -310,15 +310,15 @@ router.put('/add/cart', isAuth, async function (req, res, next) {
     }
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({ status: "error",  error: "Error updating the quantity",});
   }
 });
 
 // DELETE to remove product from user cart
 router.delete('/del/cart', isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Checkout']
+    // #swagger.description = "Removes a product from the cart"
+    // #swagger.produces = ['text/html']
   const { cartName, productId, quantity } = req.body
   const userId = req.user.id;
   try {
@@ -346,10 +346,7 @@ router.delete('/del/cart', isAuth, async function (req, res, next) {
   }
 } catch (error) {
   console.error("Error:", error);
-  res.status(500).json({
-    status: "error",
-    error: "Internal Server Error",
-  });
+  res.status(500).json({ status: "error", error: "Error removing product from cart",});
 }
 });
 

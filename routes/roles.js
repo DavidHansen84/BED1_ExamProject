@@ -7,11 +7,15 @@ var roleService = new RoleService(db);
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
+  // #swagger.tags = ['Roles']
+    // #swagger.description = "Gets all the roles"
+    // #swagger.produces = ['text/html']
   try {
     let roles = await roleService.getAll();
     res.status(200).json({ result: "Success", roles: roles });
   } catch (err) {
-    res.status(400).json({ result: "Fail", error: "Error getting roles" });
+    console.error(err);
+    res.status(500).json({ result: "Error", error: "Error getting roles" })
   }
 });
 

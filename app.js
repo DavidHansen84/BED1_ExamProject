@@ -1,9 +1,12 @@
-require('dotenv').config();
+const swaggerUi = require('swagger-ui-express')
+const swaggerFile = require('./swagger-output.json')
+const bodyParser = require('body-parser')
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+require('dotenv').config();
 
 var db = require('./models');
 db.sequelize.sync({ force: false });
@@ -18,6 +21,7 @@ var checkoutRouter = require('./routes/checkout');
 var orderRouter = require('./routes/orders');
 var roleRouter = require('./routes/roles');
 var userRouter = require('./routes/users');
+var searchRouter = require('./routes/search');
 
 var app = express();
 
@@ -41,6 +45,10 @@ app.use('/checkout', checkoutRouter);
 app.use('/orders', orderRouter);
 app.use('/roles', roleRouter);
 app.use('/users', userRouter);
+app.use('/search', searchRouter);
+
+app.use(bodyParser.json())
+app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))
 
 
 // catch 404 and forward to error handler

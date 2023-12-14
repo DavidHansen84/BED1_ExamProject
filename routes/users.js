@@ -9,19 +9,26 @@ var RoleService = require('../services/RoleService');
 var roleService = new RoleService(db);
 
 
-/* GET home page. */
+/* GET Users */
 router.get('/', async function (req, res, next) {
+  // #swagger.tags = ['Users']
+    // #swagger.description = "Gets all the users in the database"
+    // #swagger.produces = ['text/html']
   try {
     let users = await userService.get();
     let memberships = await membershipService.get();
     let roles = await roleService.getAll();
     res.status(200).json({ result: "Success", users: users, memberships: memberships, roles: roles });
   } catch (err) {
-    res.status(400).json({ result: "Fail", error: "Error getting users" });
+    console.error(err);
+    res.status(500).json({ result: "Error", error: "Error getting the users" })
   }
 });
 
 router.put('/edit/:id', async function (req, res, next) {
+  // #swagger.tags = ['Users']
+    // #swagger.description = "Edits a user"
+    // #swagger.produces = ['text/html']
   try {
   let userExists;
   const userId = parseInt(req.params.id);
@@ -89,9 +96,10 @@ router.put('/edit/:id', async function (req, res, next) {
   let newUser = await userService.getOne(email);
 
   res.status(200).json({ result: "Success", oldData: userExists, newData: newUser });
-  } catch (err) {
-    res.status(400).json({ result: "Fail", error: "Error updating user" });
-  }
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error editing the user" })
+}
 });
 
 module.exports = router;

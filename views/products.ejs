@@ -11,7 +11,26 @@
       </div>
     <h2 class="p-3">Products</h2>
     <div class="list-group">
-      
+      <a><input type="text" id="productSearch" placeholder="Search for products.." title="Type in a product"> 
+   
+          <label for="productBrand">Brand</label>
+          <select id="productBrand" name="productBrand">
+              <% brands.forEach(function(brand) { %>
+                  <option value="<%= brand.Id %>" <%= brand.Id  ? 'selected' : '' %>><%= brand.Name %></option>
+              <% }); %>
+          </select>
+   
+      <label for="productCategory">Category</label>
+      <select id="productCategory" name="productCategory">
+          <% categories.forEach(function(category) { %>
+              <option value="<%= category.Id %>" <%= category.Id  ? 'selected' : '' %>><%= category.Name %></option>
+          <% }); %>
+      </select>
+   
+    <button class="btn-sm btn-warning" onclick="search('app')">Search</button>
+    <button class="btn-sm btn-warning" onclick="clear()">Clear</button>
+    <button class="btn-sm btn-warning" onclick="addButton()">Add</button>
+  </a>
         <table class="table" id="productsTable">
           <thead>
             <tr>

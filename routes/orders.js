@@ -19,7 +19,6 @@ var userService = new UserService(db);
 var MembershipService = require('../services/MembershipService');
 var membershipService = new MembershipService(db);
 var crypto = require('crypto');
-const { stat } = require('fs/promises');
 
 async function createOrderNumber() {
   // sadly I had to use ChatGPT to fix the code I had here :(
@@ -38,6 +37,9 @@ async function checkOrderNumber(orderNumber) {
 
 // GET all the users orders
 router.get('/user/all', isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Orders']
+    // #swagger.description = "Gets all of the logged in user Orders"
+    // #swagger.produces = ['text/html']
   let OrdersAndProducts = [];
   try {
     const userId = req.user.id;
@@ -62,15 +64,15 @@ router.get('/user/all', isAuth, async function (req, res, next) {
     res.status(200).json({ result: "Success", Orders: OrdersAndProducts });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({ status: "error", error: "Error getting the orders", });
   }
 });
 
 // GET One of the users order
 router.get('/one', isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Orders']
+    // #swagger.description = "Gets one of the logged in users orders"
+    // #swagger.produces = ['text/html']
   let totalPrice = 0
   let discount = 0;
   try {
@@ -122,15 +124,15 @@ router.get('/one', isAuth, async function (req, res, next) {
     res.status(200).json({ result: "Success", order: order, ProductsInOrder: PIO, TotalPrice: totalPrice, MembershipAtOrderTime: membership.Name, DiscountPrice: discountTotal });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({ status: "error", error: "Error getting the order",  });
   }
 });
 
 // GET one of a users order - Admin
 router.get('/all/one', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Orders']
+    // #swagger.description = "Gets order with orderNumber"
+    // #swagger.produces = ['text/html']
   let totalPrice = 0
   let discount = 0;
   try{
@@ -177,15 +179,15 @@ router.get('/all/one', isAuth, isAdmin, async function (req, res, next) {
     res.status(200).json({ result: "Success", Order: order, ProductsInOrder: PIO, OrderPrice: totalPrice, MembershipAtOrderTime: membership.Name, DiscountPrice: discountTotal});
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({ status: "error", error: "Error getting the order", });
   }
 });
 
 // GET All the orders from all the users - Admin
 router.get('/all', async function (req, res, next) {
+  // #swagger.tags = ['Orders']
+    // #swagger.description = "Gets all the orders in the database and the products in it"
+    // #swagger.produces = ['text/html']
   let OrdersAndProducts = [];
   try {
     let status = await statusService.get();
@@ -206,14 +208,14 @@ router.get('/all', async function (req, res, next) {
     res.status(200).json({ result: "Success", Orders: OrdersAndProducts, status: status });
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({ status: "error", error: "Error getting the orders", });
   }
 });
 
 router.get('/orders', async function (req, res, next) {
+  // #swagger.tags = ['Orders']
+    // #swagger.description = "Gets all the orders in the database"
+    // #swagger.produces = ['text/html']
   try {
     let orders = await orderService.getAllOrders();
     if (orders == null) {
@@ -222,16 +224,16 @@ router.get('/orders', async function (req, res, next) {
     }
     res.status(200).json({ result: "Success", orders: orders});
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    console.error("Error:", error);  
+    res.status(500).json({ status: "error", error: "Error getting the orders",  });
   }
 });
 
 // POST add cart to the order
 router.post('/checkout', isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Orders']
+    // #swagger.description = "Adds a users cart to a the order and deactivates the cart"
+    // #swagger.produces = ['text/html']
   // could not remember the full way to do this so found this here - https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript
   let orderNumber = await createOrderNumber();
   let totalPrice = 0;
@@ -316,8 +318,6 @@ router.post('/checkout', isAuth, async function (req, res, next) {
       totalQuantity = totalQuantity + Quantity;
     }
     
-    
-
     await userService.updatePurchases(userId, totalQuantity)
     user = await userService.getOne(req.user.email);
     if (user.purchases < 15) {
@@ -341,15 +341,15 @@ router.post('/checkout', isAuth, async function (req, res, next) {
     res.status(200).json({ result: "Success", Order: order, OrderNumber: orderNumber, ProductsInOrder: PIO, TotalPrice: totalPrice, MembershiStatus: membership.Name,  DiscountTotal: discountTotal});
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({  status: "error",  error: "Error adding cart to the order", });
   }
 });
 
 // PUT change status of an order
 router.put('/update', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Orders']
+    // #swagger.description = "Updates the status of a order"
+    // #swagger.produces = ['text/html']
   try{
   const { orderNumber, newStatus } = req.body;
   if (!orderNumber) {
@@ -376,10 +376,7 @@ router.put('/update', isAuth, isAdmin, async function (req, res, next) {
   res.status(200).json({ status: "Status Updated", Order: order, NewStatus: newStatus  });
   }  catch (error) {
     console.error("Error:", error);
-    res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-    });
+    res.status(500).json({  status: "error",  error: "Error updating the order",  });
   }
 })
 module.exports = router;

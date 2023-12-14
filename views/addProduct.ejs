@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/stylesheets/navbar.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <h2 class="p-3"> Add a product</h2>
+
+            <form>
+                <label for="productName">Name</label>
+                <input type="text" id="productName" name="productName" value="">
+            </form>
+            <form>
+                <label for="productDescription">Description</label>
+                <input type="text" id="productDescription" name="productDescription" value="">
+            </form>
+            <form>
+                <label for="productQuantity">Quantity</label>
+                <input type="number" id="productQuantity" name="productQuantity" value="">
+            </form>
+            <form>
+                <label for="productPrice">Price</label>
+                <input type="number" id="productPrice" name="productPrice" value=">">
+            </form>
+            <form>
+                <label for="productBrand">Brand</label>
+                <select id="productBrand" name="productBrand">
+                    <% brands.forEach(function(brand) { %>
+                        <option value="<%= brand.Id %>" <%= brand.Id  ? 'selected' : '' %>><%= brand.Name %></option>
+                    <% }); %>
+                </select>
+            </form>
+            <form>
+                <label for="productCategory">Category</label>
+                <select id="productCategory" name="productCategory">
+                    <% categories.forEach(function(category) { %>
+                        <option value="<%= category.Id %>" <%= category.Id  ? 'selected' : '' %>><%= category.Name %></option>
+                    <% }); %>
+                </select>
+            </form>
+            <form>
+                <label for="productImageURL">Image URL</label>
+                <input type="text" id="productImageURL" name="productImageURL" value="">
+            </form>
+            
+            
+            <button class="btn-sm btn-warning" onclick="captureValues()">Add</button>
+
+    
+    <script>
+        async function captureValues() {
+            var newName = document.getElementById("productName").value;
+            var newDescription = document.getElementById("productDescription").value;
+            var newQuantity = document.getElementById("productQuantity").value;
+            var newPrice = document.getElementById("productPrice").value;
+            var newBrand = document.getElementById("productBrand").value;
+            var newCategory = document.getElementById("productCategory").value;
+            var newImageURL = document.getElementById("productImageURL").value;
+            
+    
+            await addProduct(newName, newImageURL, newDescription, newPrice, newQuantity, newBrand, newCategory);
+        }
+    </script>
+    <script src="../../js/Products.js"></script>
+  </body>
+</html>

@@ -16,18 +16,27 @@ var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json();
 
 
-// TODO add search, add isAdmin, add try{} error handling
-
 // GET all the products
 router.get('/', jsonParser, async function (req, res, next) {
-  let products = await productService.get();
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Gets all the products in the database"
+    // #swagger.produces = ['text/html']
+  try {
+    let products = await productService.get();
   let brands = await brandService.get();
   let categories = await categoryService.get();
   res.status(200).json({ result: "Success", products: products, brands: brands, categories: categories });
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error getting the products" })
+}
 });
 
 // GET products in user cart
 router.get('/cart', jsonParser, isAuth, async function (req, res, next) {
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Gets all the products in a users cart"
+    // #swagger.produces = ['text/html']
   let totalPrice = 0
   try {
   
@@ -62,18 +71,19 @@ router.get('/cart', jsonParser, isAuth, async function (req, res, next) {
     }
         
     res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC, TotalPrice: totalPrice });
- } catch (error) {
-  console.error("Error:", error);
-  res.status(500).json({
-      status: "error",
-      error: "Internal Server Error",
-  });
-}
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ result: "Error", error: "Error getting the products" })
+  }
 });
 
 // POST to add product to user cart
 router.post('/add/cart', jsonParser, isAuth, async function (req, res, next) {
-  const { cartName, productId, quantity } = req.body
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Adds product to the users cart"
+    // #swagger.produces = ['text/html']
+  try {
+    const { cartName, productId, quantity } = req.body
   const userId = req.user.id;
   if (userId == null) {
     return res.status(400).json({ status: "error", error: "Error getting the user ID" });
@@ -127,13 +137,20 @@ router.post('/add/cart', jsonParser, isAuth, async function (req, res, next) {
       PIC = await productsInCartService.getAll(cart.Id);
       res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC });
     }
-
   }
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error adding to cart" })
+}
 });
 
 // DELETE to remove product from user cart
 router.delete('/del/cart', jsonParser, isAuth, async function (req, res, next) {
-  const { cartName, productId, quantity } = req.body
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Removes a product from a users cart"
+    // #swagger.produces = ['text/html']
+  try {
+    const { cartName, productId, quantity } = req.body
   const userId = req.user.id;
   if (userId == null) {
     return res.status(400).json({ status: "error", error: "Error getting the user ID" });
@@ -157,11 +174,19 @@ router.delete('/del/cart', jsonParser, isAuth, async function (req, res, next) {
       res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC });
     }
   }
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error removing from cart" })
+}
 });
 
-// POST to add product ADMIN ONLY -- need isAdmin
+// POST to add product ADMIN ONLY
 router.post('/add', jsonParser, isAuth, isAdmin, async function (req, res, next) {
-  let brandExists
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Adds a product to the database"
+    // #swagger.produces = ['text/html']
+  try {
+    let brandExists
   let categoryExists
   const { Name, ImageURL, Description, Price, Quantity, Brand, Category } = req.body;
   console.log(req.body)
@@ -263,11 +288,19 @@ router.post('/add', jsonParser, isAuth, isAdmin, async function (req, res, next)
 
   newProduct = await productService.createNew(Name, ImageURL, Description, Price, Quantity, brandExists.Id, categoryExists.Id)
   res.status(200).json({ result: "Success", addedProduct: newProduct });
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error adding product" })
+}
 });
 
-// PUT to update product ADMIN ONLY -- need isAdmin
+// PUT to update product ADMIN ONLY 
 router.put('/edit/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
-  let brandExists
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Updates the product"
+    // #swagger.produces = ['text/html']
+  try {
+    let brandExists
   let categoryExists
   const productId = parseInt(req.params.id);
   const { Name, ImageURL, Description, Price, Quantity, Brand, Category } = req.body;
@@ -375,11 +408,19 @@ router.put('/edit/:id', jsonParser, isAuth, isAdmin, async function (req, res, n
   await productService.update(productId, Name, ImageURL, Description, Price, Quantity, brandExists.Id, categoryExists.Id)
   let newProduct = await productService.getOne(productId)
   res.status(200).json({ result: "Success", oldData: productExist, newData: newProduct });
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error updating the product" })
+}
 });
 
-// PUT to activate a product ADMIN ONLY need isAdmin
+// PUT to activate a product ADMIN ONLY
 router.put('/activate/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
-  const productId = parseInt(req.params.id);
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Activates a product"
+    // #swagger.produces = ['text/html']
+  try {
+    const productId = parseInt(req.params.id);
   if (!productId) {
     res.status(400).json({
       result: "Fail", error: "id must be provided in the parameters"
@@ -403,11 +444,19 @@ router.put('/activate/:id', jsonParser, isAuth, isAdmin, async function (req, re
   await productService.activate(productId);
   productExist = await productService.getOne(productId)
   res.status(200).json({result: "Success", activatedProduct: productExist, message: "This product has been made active"})
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error activating the product" })
+}
 });
 
-// DELETE to soft-delete product ADMIN ONLY -- need isAdmin
+// DELETE to soft-delete product ADMIN ONLY 
 router.delete('/delete/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
-  const productId = parseInt(req.params.id);
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Soft-delete (deavtivate) a product"
+    // #swagger.produces = ['text/html']
+  try {
+    const productId = parseInt(req.params.id);
   if (!productId) {
     res.status(400).json({
       result: "Fail", error: "id must be provided in the parameters"
@@ -429,6 +478,43 @@ router.delete('/delete/:id', jsonParser, isAuth, isAdmin, async function (req, r
   await productService.delete(productId);
   productExist = await productService.getOne(productId)
   res.status(200).json({result: "Success", deletedProduct: productExist, message: "This product has been deleted"})
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error deleting the product" })
+}
+});
+
+// DELETE to full delete a product
+router.delete('/delete/delete/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Products']
+    // #swagger.description = "Soft-delete (deavtivate) a product"
+    // #swagger.produces = ['text/html']
+  try {
+    const productId = parseInt(req.params.id);
+  if (!productId) {
+    res.status(400).json({
+      result: "Fail", error: "id must be provided in the parameters"
+    })
+    return res.end();
+  }
+  let productExist = await productService.getOne(productId)
+
+  if (!productExist) {
+    res.status(400).json({
+      result: "Fail", error: "Product does not exist"
+    })
+    return res.end();
+  }
+  if (productExist[0].Active === 0) {
+    res.status(200).json({ result: "Success", message: "Product is already deleted", deletedProduct: productExist })
+    return res.end();
+  }
+  await productService.fullDelete(productId);
+  res.status(200).json({result: "Success", deletedProduct: productExist, message: "This product has been deleted"})
+} catch (err) {
+  console.error(err);
+  res.status(500).json({ result: "Error", error: "Error deleting the product" })
+}
 });
 
 module.exports = router;

@@ -9,16 +9,22 @@ var productService = new ProductService(db);
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
+  // #swagger.tags = ['Brand']
+    // #swagger.description = "Gets all the brands"
+    // #swagger.produces = ['text/html']
   try {
     let brands = await brandService.get();
     res.status(200).json({ result: "Success", brands: brands });
   } catch (err) {
-    res.status(400).json({ result: "Fail", error: "Error getting brand" });
+    res.status(500).json({ result: "Fail", error: "Error getting brand" });
   }
 });
 
 // POST a new brand
 router.post('/add', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Brand']
+    // #swagger.description = "Adds a brand"
+    // #swagger.produces = ['text/html']
 
   const { Name } = req.body;
   try {
@@ -34,12 +40,16 @@ router.post('/add', isAuth, isAdmin, async function (req, res, next) {
     newBrand = await brandService.create(Name)
     res.status(200).json({ result: "Success", addedBrand: newBrand });
   } catch (err) {
-    return res.status(400).json({ result: "Fail", error: "Error creating brand" })
+    return res.status(500).json({ result: "Fail", error: "Error creating brand" })
   }
 });
 
 // PUT change the name of the brand
+
 router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Brand']
+    // #swagger.description = "Change the name of a brand"
+    // #swagger.produces = ['text/html']
   try {
     const BrandId = parseInt(req.params.id);
     console.log(BrandId)
@@ -71,12 +81,15 @@ router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
 
   } catch (err) {
     console.error(err);
-    res.status(400).json({ result: "Fail", error: "Error editing brand" })
+    res.status(500).json({ result: "Fail", error: "Error editing brand" })
   }
 });
 
 // PUT change brand of the product
 router.put('/product/:id', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Brand']
+    // #swagger.description = "Change the brand of a product"
+    // #swagger.produces = ['text/html']
   try {
     const ProductId = parseInt(req.params.id);
     const newBrand = req.body.newBrand;
@@ -111,13 +124,13 @@ router.put('/product/:id', isAuth, isAdmin, async function (req, res, next) {
     
   } catch (err) {
     console.error(err);
-    res.status(400).json({ result: "Fail", error: "Error editing brand" })
+    res.status(500).json({ result: "Fail", error: "Error editing brand" })
   }
 });
 
 // DELETE a brand
 router.delete('/delete/:id', isAuth, isAdmin, async (req, res) => {
-  // #swagger.tags = ['Categories']
+  // #swagger.tags = ['Brand']
   // #swagger.description = "Deletes a Brand if it is not linked to a product"
   // #swagger.produces = ['text/html']
   try {
@@ -142,7 +155,7 @@ router.delete('/delete/:id', isAuth, isAdmin, async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(400).json({ result: "Fail", error: "Error deleting brand" })
+    res.status(500).json({ result: "Fail", error: "Error deleting brand" })
   }
 });
 

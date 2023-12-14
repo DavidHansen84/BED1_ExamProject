@@ -38,7 +38,6 @@ async function editCategory(id, Name) {
             opener.location.reload()
             return Promise.resolve(resData);
         }
-        console.log("fail")
         const errorData = response.json();
         return Promise.reject(errorData);
     })
@@ -62,7 +61,6 @@ async function editButton(id) {
             window.open(url + id,'_blank', 'width=500px, height=500px')
             return Promise.resolve(resData);
         }
-        console.log("fail")
         return Promise.reject(response);
     })
       .catch((response) => {

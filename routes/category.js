@@ -13,16 +13,22 @@ var productService = new ProductService(db);
 
 /* GET home page. */
 router.get('/', async function (req, res, next) {
+  // #swagger.tags = ['Categories']
+    // #swagger.description = "Gets all the categories"
+    // #swagger.produces = ['text/html']
   try {
     let categories = await categoryService.get();
     res.status(200).json({ result: "Success", categories: categories });
   } catch (err) {
-    res.status(400).json({ result: "Fail", error: "Error getting categories" });
+    res.status(500).json({ result: "Fail", error: "Error getting categories" });
   }
 });
 
 // POST a new category
 router.post('/add', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Categories']
+    // #swagger.description = "Adds a new category"
+    // #swagger.produces = ['text/html']
 
   const { Name } = req.body;
   try {
@@ -38,12 +44,15 @@ router.post('/add', isAuth, isAdmin, async function (req, res, next) {
     newCategory = await categoryService.create(Name)
     res.status(200).json({ result: "Success", addedCategory: newCategory });
   } catch (err) {
-    return res.status(400).json({ result: "Fail", error: "Error creating category" })
+    return res.status(500).json({ result: "Fail", error: "Error creating category" })
   }
 });
 
 // PUT change the name of the category
 router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Categories']
+    // #swagger.description = "Changes the name of a category"
+    // #swagger.produces = ['text/html']
   try {
     const CategoryId = parseInt(req.params.id);
     const name = req.body.Name;
@@ -72,12 +81,15 @@ router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
 
   } catch (err) {
     console.error(err);
-    res.status(400).json({ result: "Fail", error: "Error editing category" })
+    res.status(500).json({ result: "Fail", error: "Error editing category" })
   }
 });
 
 // PUT change category of the product
 router.put('/product/:id', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Categories']
+    // #swagger.description = "Changes the category of a product"
+    // #swagger.produces = ['text/html']
   try {
     const ProductId = parseInt(req.params.id);
     const newCategory = req.body.newCategory;
@@ -112,7 +124,7 @@ router.put('/product/:id', isAuth, isAdmin, async function (req, res, next) {
     
   } catch (err) {
     console.error(err);
-    res.status(400).json({ result: "Fail", error: "Error editing category" })
+    res.status(500).json({ result: "Fail", error: "Error editing category" })
   }
 });
 
@@ -143,7 +155,7 @@ router.delete('/delete/:id', isAuth, isAdmin, async (req, res) => {
     }
   } catch (err) {
     console.error(err);
-    res.status(400).json({ result: "Fail", error: "Error deleting category" })
+    res.status(500).json({ result: "Fail", error: "Error deleting category" })
   }
 });
 
