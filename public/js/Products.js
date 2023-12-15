@@ -1,3 +1,4 @@
+
 async function deleteProduct(id) {
     let url = 'http://localhost:3000/products/delete/'
         await fetch(url + id, {
@@ -77,10 +78,10 @@ async function editProduct(id, Name, ImageURL, Description, Price, Quantity, Bra
 }
 
 async function editButton(id) {
-    let url = 'http://localhost:3000/products/add'
+    let url = 'http://localhost:3000/admin/editProduct/'
     console.log(url)
         await fetch(url + id, {
-        method: 'PUT',
+        method: 'GET',
         headers: {
             'Content-type': 'application/json'
         }    
@@ -150,9 +151,11 @@ async function addProduct(Name, ImageURL, Description, Price, Quantity, Brand, C
       });;
 }
 
+
 function search(productSearch, categorySearch, brandSearch) {
     const url = 'http://localhost:3000/search';
     const url2 = 'http://localhost:3000/admin/products/search';
+
     fetch(url, {
         method: 'POST',
         headers: {
@@ -173,16 +176,20 @@ function search(productSearch, categorySearch, brandSearch) {
     })
     .then((jsonData) => {
         console.log(jsonData);
-        alert('Products in Search');
-        console.log(response);
-        // window.location.href = url2;
+        
+        // sadly had to get ChatGPT help here to send the info to the page. :/
+        const url2WithParams = `${url2}?jsonData=${encodeURIComponent(JSON.stringify(jsonData))}`;
+        window.location.href = url2WithParams;
+        return Promise.resolve(jsonData);
     })
     .catch((response) => {
         console.log("failed")
-        alert(response.statusText);
+        alert(response);
     });
 }
 
+
+// old code b4 chatGPT
 // function search(productSearch, categorySearch, brandSearch) {
 //     const url = 'http://localhost:3000/search';
 //     const url2 = 'http://localhost:3000/admin/products/search';

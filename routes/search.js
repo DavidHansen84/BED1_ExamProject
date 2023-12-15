@@ -11,6 +11,9 @@ var brandService = new BrandService(db);
 
 
 router.post('/', jsonParser, async function (req, res, next) {
+  // #swagger.tags = ['Search']
+    // #swagger.description = "Search API endpoint"
+    // #swagger.produces = ['text/html']
   try{
   let brands = await brandService.get();
   let categories = await categoryService.get();

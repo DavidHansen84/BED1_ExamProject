@@ -2,8 +2,33 @@ body {
   margin-top: 50px;
   padding: 50px;
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  background: #587fa7;
 }
 
 a {
   color: #00B7FF;
+}
+
+.table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #587fa7; 
+} 
+
+thead {
+  font-family: Consolas;
+  background-color: #081113;
+  color: #fff;  
+  
+}
+
+tbody{
+  font-family: 'Gill Sans', 'Gill Sans MT', Arial, Helvetica, sans-serif, 'Trebuchet MS', sans-serif;
+  background: #83D1E1;
+}
+
+tbody:nth-child(even) {
+  background: #6e97c0; 
 }

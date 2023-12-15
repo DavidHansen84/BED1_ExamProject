@@ -13,23 +13,26 @@
     <div class="list-group">
       <a><input type="text" id="productSearch" placeholder="Search for products.." title="Type in a product"> 
    
-          <label for="productBrand">Brand</label>
-          <select id="productBrand" name="productBrand">
-              <% brands.forEach(function(brand) { %>
-                  <option value="<%= brand.Id %>" <%= brand.Id  ? 'selected' : '' %>><%= brand.Name %></option>
-              <% }); %>
-          </select>
+        <label for="productBrand">Brand</label>
+        <select id="productBrand" name="productBrand">
+            <option value="" selected>Choose a brand</option>
+            <% brands.forEach(function(brand) { %>
+                <option value="<%= brand.Id %>" <%= "" ? 'selected' : '' %>><%= brand.Name %></option>
+            <% }); %>
+        </select>
+        
+        <label for="productCategory">Category</label>
+        <select id="productCategory" name="productCategory">
+            <option value="" selected>Choose a category</option> 
+            <% categories.forEach(function(category) { %>
+                <option value="<%= category.Id %>" <%= "" ? 'selected' : '' %>><%= category.Name %></option>
+            <% }); %>
+        </select>
    
-      <label for="productCategory">Category</label>
-      <select id="productCategory" name="productCategory">
-          <% categories.forEach(function(category) { %>
-              <option value="<%= category.Id %>" <%= category.Id  ? 'selected' : '' %>><%= category.Name %></option>
-          <% }); %>
-      </select>
-   
-    <button class="btn-sm btn-warning" onclick="search('app')">Search</button>
-    <button class="btn-sm btn-warning" onclick="clear()">Clear</button>
-    <button class="btn-sm btn-warning" onclick="addButton()">Add</button>
+    <button class="btn-sm btn-warning" onclick="captureValues()">Search</button>
+    <button class="btn-sm btn-warning" onclick="window.location.href='http://localhost:3000/admin/products'">Clear</button>
+    <button class="btn-sm btn-success" onclick="addButton()">+ Add</button>
+
   </a>
         <table class="table" id="productsTable">
           <thead>
@@ -89,7 +92,15 @@
         </table>
               
     </div>
-    
+    <script>
+      async function captureValues() {
+          var newProduct = document.getElementById("productSearch").value;
+          var newBrand = document.getElementById("productBrand").value;
+          var newCategory = document.getElementById("productCategory").value;
+     
+          await search(newProduct, newCategory, newBrand);
+      }
+  </script>
     <script src="../js/Products.js"></script>
   </body>
 </html>

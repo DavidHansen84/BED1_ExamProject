@@ -5,7 +5,7 @@ var RoleService = require('../services/RoleService');
 var roleService = new RoleService(db);
 
 
-/* GET home page. */
+/* GET roles page. */
 router.get('/', async function (req, res, next) {
   // #swagger.tags = ['Roles']
     // #swagger.description = "Gets all the roles"

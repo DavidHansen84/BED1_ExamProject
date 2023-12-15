@@ -97,22 +97,18 @@
         }
       }
     },
-    "/admin/admin/products/search": {
+    "/admin/products/search": {
       "get": {
-        "description": "",
+        "tags": [
+          "Admin"
+        ],
+        "description": "Gets the search data and displays it",
+        "produces": [
+          "text/html"
+        ],
         "parameters": [
           {
-            "name": "productSearch",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "categorySearch",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "brandSearch",
+            "name": "jsonData",
             "in": "query",
             "type": "string"
           },
@@ -2148,7 +2144,13 @@
     },
     "/search/": {
       "post": {
-        "description": "",
+        "tags": [
+          "Search"
+        ],
+        "description": "Search API endpoint",
+        "produces": [
+          "text/html"
+        ],
         "parameters": [
           {
             "name": "body",
