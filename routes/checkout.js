@@ -49,7 +49,7 @@ router.get('/', isAuth, async function (req, res, next) {
 
     let { cartName } = req.body
     if (!cartName) {
-      cartName = "";
+      return res.status(400).json({ status: "error", error: "cartName must be provided" });
     }
     const userId = req.user.id;
     if (userId == null) {
@@ -93,6 +93,9 @@ router.post('/add/cart', isAuth, async function (req, res, next) {
   try {
   if (userId == null) {
     return res.status(400).json({ status: "error", error: "Error getting the user ID" });
+  }
+  if (!cartName) {
+    return res.status(400).json({ status: "error", error: "cartName must be provided" });
   }
   if (quantity == null) {
     return res.status(400).json({ status: "error", error: "quantity must be provided" });
@@ -295,7 +298,6 @@ router.put('/add/cart', isAuth, async function (req, res, next) {
     return res.status(400).json({ status: "error", error: "The cart does not exist" });
   }
   let product = await productService.getOne(productId);
-  console.log(product[0])
   if (!product[0]) {
     return res.status(400).json({ status: "error", error: "Product does not exist" });
   }
@@ -304,7 +306,12 @@ router.put('/add/cart', isAuth, async function (req, res, next) {
     return res.status(400).json({ status: "error", error: "Product is not in this cart" });
   }
   else {
-          await productsInCartService.update(cart.Id, quantity);
+    if ( product[0].Quantity < quantity) {
+      return res.status(400).json({ result: "Fail", message: "not enough in stock" });
+    }
+    let PICId = await productsInCartService.getOne(cart.Id, productId);
+    console.log(PICId.Id)
+          await productsInCartService.update(PICId.Id, quantity);
       PIC = await productsInCartService.getAll(cart.Id)
       res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC });
     }
@@ -325,6 +332,9 @@ router.delete('/del/cart', isAuth, async function (req, res, next) {
   if (userId == null) {
     return res.status(400).json({ status: "error", error: "Error getting the user ID" });
   }
+  if (!cartName) {
+    return res.status(400).json({ status: "error", error: "cartName must be provided" });
+  }
   let cart = await cartService.getOne(cartName, userId);
   if (!cart) {
     cart = await cartService.create(cartName, userId)
@@ -334,15 +344,8 @@ router.delete('/del/cart', isAuth, async function (req, res, next) {
     res.status(400).json({ result: "Fail", message: "That product is not in this cart" });
     res.end();
   } else {
-    let newQuantity = PIC.Quantity - quantity;
-    if (newQuantity == 0) {
-      await productsInCartService.remove(PIC.Id)
+      await productsInCartService.remove(cart.Id, productId)
       res.status(200).json({ result: "Success", message: "Product removed from cart" });
-    } else {
-      await productsInCartService.update(cart.Id, newQuantity);
-      PIC = await productsInCartService.getAll(cart.Id)
-      res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC });
-    }
   }
 } catch (error) {
   console.error("Error:", error);

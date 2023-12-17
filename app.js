@@ -22,6 +22,7 @@ var orderRouter = require('./routes/orders');
 var roleRouter = require('./routes/roles');
 var userRouter = require('./routes/users');
 var searchRouter = require('./routes/search');
+var statusRouter = require('./routes/status');
 
 var app = express();
 
@@ -46,6 +47,7 @@ app.use('/orders', orderRouter);
 app.use('/roles', roleRouter);
 app.use('/users', userRouter);
 app.use('/search', searchRouter);
+app.use('/status', statusRouter);
 
 app.use(bodyParser.json())
 app.use('/doc', swaggerUi.serve, swaggerUi.setup(swaggerFile))

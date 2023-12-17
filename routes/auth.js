@@ -98,7 +98,7 @@ router.post("/register", async (req, res, next) => {
     if (Address == null || Address.trim() === "") {
       return res.status(400).json({status: "error", error: "Address is required."});
     }
-    if (Telephone == null || Telephone.trim() === "" ) {
+    if (Telephone == null ) {
       return res.status(400).json({status: "error", error: "Telephone number is required."});
     }
     if (isNaN(Telephone)) {
@@ -123,7 +123,7 @@ router.post("/register", async (req, res, next) => {
     crypto.pbkdf2(Password, salt, 310000, 32, 'sha256', function(err, hashedPassword) {
       if (err) { return next(err); }
       userService.create(Username, hashedPassword, Email, FirstName, LastName, Address, Telephone, salt, membership.Id, role.Id)
-      res.status(200).json({status: "success", result: "You created an account."});
+      res.status(200).json({status: "success", result: "You created an account.", user: Username});
     });
   } catch (err) {
     console.error(err);

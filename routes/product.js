@@ -51,9 +51,8 @@ router.get('/cart', jsonParser, isAuth, async function (req, res, next) {
   
   let { cartName } = req.body
   if (!cartName) {
-    cartName = "";
+    return res.status(400).json({ status: "error", error: "cartName must be provided" });
   }
-  console.log(req.user)
   const userId = req.user.id;
   if (userId == null) {
     res.status(400).json({ status: "error", error: "Error getting the user ID" });
@@ -61,7 +60,7 @@ router.get('/cart', jsonParser, isAuth, async function (req, res, next) {
   }
   let cart = await cartService.getOne(cartName, userId);
   if (cart == null) {
-    res.status(400).json({ result: "Fail", message: "Cart does not exist" });
+    res.status(400).json({ result: "Fail", message: "Cart does not exist, enter a difrent cartName." });
     return res.end();
   }
   
@@ -96,6 +95,9 @@ router.post('/add/cart', jsonParser, isAuth, async function (req, res, next) {
   const userId = req.user.id;
   if (userId == null) {
     return res.status(400).json({ status: "error", error: "Error getting the user ID" });
+  }
+  if (!cartName) {
+    return res.status(400).json({ status: "error", error: "cartName must be provided" });
   }
   if (quantity == null) {
     return res.status(400).json({ status: "error", error: "quantity must be provided" });
@@ -140,12 +142,10 @@ router.post('/add/cart', jsonParser, isAuth, async function (req, res, next) {
     if ( product[0].Quantity < newQuantity || product[0].Quantity < quantity) {
       return res.status(400).json({ result: "Fail", message: "not enough in stock" });
     }
-    else {
       let PICId = await productsInCartService.getOne(cart.Id, productId);
       await productsInCartService.update(PICId.Id, newQuantity);
       PIC = await productsInCartService.getAll(cart.Id);
       res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC });
-    }
   }
 } catch (err) {
   console.error(err);
@@ -164,6 +164,9 @@ router.delete('/del/cart', jsonParser, isAuth, async function (req, res, next) {
   if (userId == null) {
     return res.status(400).json({ status: "error", error: "Error getting the user ID" });
   }
+  if (!cartName) {
+    return res.status(400).json({ status: "error", error: "cartName must be provided" });
+  }
   if (productId == null) {
     return res.status(400).json({ status: "error", error: "Error getting the product ID" });
   }
@@ -177,7 +180,8 @@ router.delete('/del/cart', jsonParser, isAuth, async function (req, res, next) {
     res.end();
   } else {
       await productsInCartService.remove(productId)
-      res.status(200).json({ result: "Success", message: "Product removed from cart" });
+      let prodInCart = await productsInCartService.getAll(cart.Id)
+      res.status(200).json({ result: "Success", message: "Product removed from cart", cart: prodInCart });
     }
   } catch (err) {
   console.error(err);
@@ -185,7 +189,7 @@ router.delete('/del/cart', jsonParser, isAuth, async function (req, res, next) {
 }
 });
 
-// POST to add product ADMIN ONLY
+// POST to add product 
 router.post('/add', jsonParser, isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Products']
     // #swagger.description = "Adds a product to the database"
@@ -299,7 +303,7 @@ router.post('/add', jsonParser, isAuth, isAdmin, async function (req, res, next)
 }
 });
 
-// PUT to update product ADMIN ONLY 
+// PUT to update product 
 router.put('/edit/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Products']
     // #swagger.description = "Updates the product"
@@ -419,7 +423,7 @@ router.put('/edit/:id', jsonParser, isAuth, isAdmin, async function (req, res, n
 }
 });
 
-// PUT to activate a product ADMIN ONLY
+// PUT to activate a product 
 router.put('/activate/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Products']
     // #swagger.description = "Activates a product"
@@ -455,7 +459,7 @@ router.put('/activate/:id', jsonParser, isAuth, isAdmin, async function (req, re
 }
 });
 
-// DELETE to soft-delete product ADMIN ONLY 
+// DELETE to soft-delete product  
 router.delete('/delete/:id', jsonParser, isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Products']
     // #swagger.description = "Soft-delete (deavtivate) a product"

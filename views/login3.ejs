@@ -15,7 +15,8 @@
   </head>
 
   <body>
-    <div >
+    <div id="login-form">
+      <form action="/admin/login" method="post">
         <section>
           <label for="Email">Email</label>
           <input
@@ -37,7 +38,8 @@
             required
           />
         </section>
-        <button class="btn-sm btn-warning" onclick="captureValues()"> Sign in </button>
+        <button type="submit">Sign in</button>
+      </form>
       <button class="btn-sm btn-success" onclick="populateButton()"> Populate </button>
       <hr />
     </div>
@@ -45,16 +47,11 @@
     <footer class="info">
       <p>Created by <a href="https://www.noroff.no/en/">Noroff</a></p>
       <p>Part of Back-end Development Program at Noroff</p>
-      
+      <p>
+        Authentication powered by
+        <a href="https://www.passportjs.org">Passport</a>
+      </p>
     </footer>
-    <script>
-        async function captureValues() {
-            var Email = document.getElementById("Email").value;
-            var Password = document.getElementById("current-password").value;
-       
-            await login(Email, Password);
-        }
-    </script>
     <script src="../js/Login.js"></script>
   </body>
 </html>

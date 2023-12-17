@@ -20,6 +20,7 @@ const { isAuth, isAdmin } = require('../middleware/middleware');
 var jwt = require('jsonwebtoken');
 const validator = require('email-validator');
 var axios = require("axios");
+const cookie = require('cookie');
 
 let role
 
@@ -36,12 +37,13 @@ router.get('/', async function (req, res, next) {
   res.render('login', { title: 'Products' });
 });
 
+// Admin login
 router.post("/login", jsonParser, async (req, res, next) => {
   // #swagger.tags = ['Auth']
   // #swagger.description = "Post for registered users to be able to login"
   // #swagger.produces = ['text/html']
-  const { Email, Password } = req.body;
-  console.log(Email, Password)
+  try {
+    const { Email, Password } = req.body;
   if (Email == null) {
     return res.status(400).json({ status: "error", error: "Email is required." });
   }
@@ -60,22 +62,28 @@ router.post("/login", jsonParser, async (req, res, next) => {
       }
       let token;
       try {
-        console.log(role)
         token = jwt.sign(
           { id: data.Id, email: data.email, role: role },
           process.env.TOKEN_SECRET,
           { expiresIn: "2h" }
         );
-      } catch (err) {
-        res.status(400).json({ error: "Something went wrong with creating JWT token" })
-      }
-
+      
+      
       // got it form chatGPT and https://expressjs.com/en/api.html#res.cookie
-      res.status(200).cookie('token', 'Bearer ' + token, { expires: new Date(Date.now() + 2 * 3600000) }).redirect('/admin/products')
-    });
+      res.cookie('token', 'Bearer ' + token, { expires: new Date(Date.now() + 2 * 3600000) });
+      console.log(token)
+      console.log("HERE")
+      console.log(res.cookie)
+      res.status(200).redirect('/admin/products');
+    } catch (err) {
+      res.status(400).json({ error: "Something went wrong with creating JWT token" })
+    }});
   });
-});
+} catch (err) {
+  res.status(500).json({ error: "Something went " })
+}});
 
+// Admin get products
 router.get('/products', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "See all the products"
@@ -96,6 +104,7 @@ router.get('/products', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
+// Admin search
 router.get('/products/search', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Gets the search data and displays it"
@@ -118,6 +127,7 @@ router.get('/products/search', isAuth, isAdmin, async function (req, res, next) 
   }
 });
 
+// Admin edit product
 router.get('/editProduct/:id', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to edit the products"
@@ -146,6 +156,7 @@ router.get('/editProduct/:id', isAuth, isAdmin, async function (req, res, next) 
   }
 });
 
+// Admin add product
 router.get('/addProduct', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to add a new product"
@@ -160,32 +171,35 @@ router.get('/addProduct', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
+// Admin add brand
 router.get('/addBrand', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to add a new Brand"
   // #swagger.produces = ['text/html']
   try {
-    
-    res.render('addBrand', { title: 'addBrand'});
+
+    res.render('addBrand', { title: 'addBrand' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error adding brand" })
   }
 });
 
+// Admin add category
 router.get('/addcategory', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to add a new Category"
   // #swagger.produces = ['text/html']
   try {
-    
-    res.render('addCategory', { title: 'addCategory'});
+
+    res.render('addCategory', { title: 'addCategory' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error adding category" })
   }
 });
 
+// Admin get brands
 router.get('/brands', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "See all the brands"
@@ -200,6 +214,7 @@ router.get('/brands', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
+// Admin edit a brand
 router.get('/editBrand/:id', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to edit the brands"
@@ -228,6 +243,7 @@ router.get('/editBrand/:id', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
+// Admin get categories
 router.get('/categories', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "See all the categories"
@@ -235,7 +251,6 @@ router.get('/categories', isAuth, isAdmin, async function (req, res, next) {
   try {
     const response = await axios.get("http://localhost:3000/categories");
     let data = response.data;
-    console.log(data.categories)
     res.render('categories', { title: 'Express', categories: data.categories });
   } catch (err) {
     console.error(err);
@@ -243,6 +258,7 @@ router.get('/categories', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
+// Admin edit a category
 router.get('/editCategory/:id', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to edit the categories"
@@ -271,6 +287,7 @@ router.get('/editCategory/:id', isAuth, isAdmin, async function (req, res, next)
   }
 });
 
+// Admin get roler
 router.get('/roles', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "See all the roles"
@@ -278,7 +295,6 @@ router.get('/roles', isAuth, isAdmin, async function (req, res, next) {
   try {
     const response = await axios.get("http://localhost:3000/roles");
     let data = response.data;
-    console.log(data.roles)
     res.render('roles', { title: 'Express', roles: data.roles });
   } catch (err) {
     console.error(err);
@@ -286,6 +302,7 @@ router.get('/roles', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
+// Admin get users
 router.get('/users', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "See all the users"
@@ -300,19 +317,21 @@ router.get('/users', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
+// Admin add a user
 router.get('/addUser', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to add a new User"
   // #swagger.produces = ['text/html']
   try {
-    
-    res.render('addUser', { title: 'addUser'});
+
+    res.render('addUser', { title: 'addUser' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error adding category" })
   }
 });
 
+// Admin edit a user
 router.get('/editUser/:id', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to edit the users"
@@ -345,29 +364,47 @@ router.get('/editUser/:id', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
+// Admin get orders
 router.get('/orders', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "See all the orders"
   // #swagger.produces = ['text/html']
   try {
-    const response = await axios.get("http://localhost:3000/orders/all");
+    const cookieHeader = req.headers.cookie;
+    const cookies = cookie.parse(cookieHeader || '');
+    let token = cookies.token.split(' ')[1]
+    const response = await axios.get("http://localhost:3000/orders/all", {
+      headers: {
+        Authorization: `Bearer ` + token,
+      }
+    });
+    const status = await axios.get("http://localhost:3000/status");
     let data = response.data;
-    res.render('orders', { title: 'Express', orders: data.Orders, status: data.status });
+    res.render('orders', { title: 'Express', orders: data.Orders, status: status.data.status });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error getting orders" })
   }
 });
 
+// Admin edit orders
 router.get('/editOrder/:id', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
   // #swagger.description = "Admin page to edit the orders"
   // #swagger.produces = ['text/html']
   try {
-    const response = await axios.get("http://localhost:3000/orders/orders");
+    const cookieHeader = req.headers.cookie;
+    const cookies = cookie.parse(cookieHeader || '');
+    let token = cookies.token.split(' ')[1]
+    const response = await axios.get("http://localhost:3000/orders/orders", {
+      headers: {
+        Authorization: `Bearer ` + token,
+      }
+    });
     let orderId = req.params.id;
     let data = response.data;
     let statuses = await statusService.get()
+    console.log(data.orders)
     res.render('editOrder', { title: 'Orders', order: data.orders[orderId - 1], statuses: statuses });
   } catch (err) {
     console.error(err);

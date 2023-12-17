@@ -19,6 +19,7 @@ var userService = new UserService(db);
 var MembershipService = require('../services/MembershipService');
 var membershipService = new MembershipService(db);
 var crypto = require('crypto');
+const { is } = require('express/lib/request');
 
 async function createOrderNumber() {
   // sadly I had to use ChatGPT to fix the code I had here :(
@@ -79,7 +80,7 @@ router.get('/one', isAuth, async function (req, res, next) {
 
     let { orderName } = req.body
     if (!orderName) {
-      orderName = "";
+      return res.status(400).json({ status: "error", error: "orderName must be provided" });
     }
     const userId = req.user.id;
     if (userId == null) {
@@ -126,7 +127,7 @@ router.get('/one', isAuth, async function (req, res, next) {
   }
 });
 
-// GET one of a users order - Admin
+// GET one of a users order
 router.get('/all/one', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Orders']
     // #swagger.description = "Gets order with orderNumber"
@@ -181,12 +182,14 @@ router.get('/all/one', isAuth, isAdmin, async function (req, res, next) {
   }
 });
 
-// GET All the orders from all the users - Admin
-router.get('/all', async function (req, res, next) {
+// GET All the orders from all the users
+router.get('/all', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Orders']
     // #swagger.description = "Gets all the orders in the database and the products in it"
     // #swagger.produces = ['text/html']
   let OrdersAndProducts = [];
+  let orderStatus;
+  console.log(req.user)
   try {
     let status = await statusService.get();
     if (!status) {
@@ -202,19 +205,20 @@ router.get('/all', async function (req, res, next) {
       let orderAndProducts = []
       let order = await orderService.getOne(obj.Name, obj.UserId);
       let product = await productsInOrderService.getAll(obj.Id);
+      orderStatus = await statusService.getOneId(order.StatusId)
       orderAndProducts.push(order);
       orderAndProducts.push(product);
       OrdersAndProducts.push(orderAndProducts);
     }
-
-    res.status(200).json({ result: "Success", Orders: OrdersAndProducts, status: status });
+    res.status(200).json({ result: "Success", Orders: OrdersAndProducts, status: orderStatus });
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ status: "error", error: "Error getting the orders", });
   }
 });
 
-router.get('/orders', async function (req, res, next) {
+//GET all the orders in the database
+router.get('/orders', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Orders']
     // #swagger.description = "Gets all the orders in the database"
     // #swagger.produces = ['text/html']
@@ -244,7 +248,7 @@ router.post('/checkout', isAuth, async function (req, res, next) {
    
     let { cartName } = req.body
     if (!cartName) {
-      cartName = "";
+      return res.status(400).json({ status: "error", error: "cartName must be provided" });
     }
     const userId = req.user.id;
     if (userId == null) {

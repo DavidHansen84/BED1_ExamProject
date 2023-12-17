@@ -23,14 +23,34 @@ router.post('/', jsonParser, async function (req, res, next) {
   if (!categories) {
     return res.status(400).json({ result: "Fail", error: "No response from the categories API" });
   }
-    const { productSearch, categorySearch, brandSearch } = req.body;
+    let { productSearch, categorySearch, brandSearch } = req.body;
 
-    const productQuery = `SELECT * FROM ecommerce.products WHERE Name LIKE '%${productSearch}%';`
+    let productQuery = `SELECT * FROM ecommerce.products WHERE Name LIKE '%${productSearch}%';`
 
-    const categoryQuery = `SELECT * FROM ecommerce.products WHERE CategoryId = ${categorySearch};`
+    let categoryQuery = `SELECT * FROM ecommerce.products WHERE CategoryId = '${categorySearch}';`
 
-    const brandQuery = `SELECT * FROM ecommerce.products WHERE BrandId = ${brandSearch};`
+    let brandQuery = `SELECT * FROM ecommerce.products WHERE BrandId = '${brandSearch}';`
 
+if (categorySearch){
+  if(isNaN(categorySearch)) {
+    let category = await categoryService.getOne(categorySearch);
+    if (!category) {
+      return res.status(400).json({ result: "Fail", message: "No category with this name" });
+    }
+    categorySearch = category.dataValues.Id
+    categoryQuery = `SELECT * FROM ecommerce.products WHERE CategoryId = '${categorySearch}';`
+  }
+}
+if (brandSearch){
+  if(isNaN(brandSearch)) {
+    let brand = await brandService.getOne(brandSearch);
+    if (!brand) {
+      return res.status(400).json({ result: "Fail", message: "No brand with this name" });
+    }
+    brandSearch = brand.dataValues.Id
+    brandQuery = `SELECT * FROM ecommerce.products WHERE BrandId = '${brandSearch}';`
+  }
+}
 if (productSearch) {
   let products = await productService.searchProduct(productQuery)
   res.status(200).json({ result: "Success", products: products, brands: brands, categories: categories });
@@ -38,12 +58,16 @@ if (productSearch) {
 if (!productSearch) {
 if (categorySearch) {
   let products = await productService.searchProduct(categoryQuery)
+  console.log(products)
   res.status(200).json({ result: "Success", products: products, brands: brands, categories: categories });
 }
 if (!categorySearch) {
 if (brandSearch) {
   let products = await productService.searchProduct(brandQuery)
   res.status(200).json({ result: "Success", products: products, brands: brands, categories: categories });
+}
+if (!brandSearch) {
+  return res.status(400).json({ result: "Fail", message: "productSearch, categorySearch or brandSearch must be provided" });
 }}}
 } catch (err) {
   console.error(err);

@@ -6,6 +6,7 @@ var userService = new UserService(db);
 var MembershipService = require('../services/MembershipService');
 var membershipService = new MembershipService(db);
 var RoleService = require('../services/RoleService');
+const { isAuth, isAdmin } = require('../middleware/middleware');
 var roleService = new RoleService(db);
 
 
@@ -25,7 +26,7 @@ router.get('/', async function (req, res, next) {
   }
 });
 
-router.put('/edit/:id', async function (req, res, next) {
+router.put('/edit/:id', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Users']
     // #swagger.description = "Edits a user"
     // #swagger.produces = ['text/html']

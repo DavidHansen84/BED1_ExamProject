@@ -11,18 +11,15 @@ async function editOrder(OrderNumber, Status) {
         })
     }).then((response) => {
         if (response.ok) {
-            console.log("success")
             const resData = 'Edited order';
             window.close();
             opener.location.reload()
             return Promise.resolve(resData);
         }
         const errorData = response.json();
-        alert("fail")
         return Promise.reject(errorData);
     })
       .catch((response) => {
-        alert("hello")
         alert(response.statusText);
       });;
 }

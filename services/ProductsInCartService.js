@@ -45,10 +45,11 @@ class ProductsInCartService {
         })
     }
 
-    async remove(id) {
+    async remove(cartId, productId) {
         return this.ProductsInCart.destroy({
             where: { 
-                ProductId: id,
+                ProductId: productId,
+                CartId: cartId
             }
         }).catch( err => {
             return (err)
