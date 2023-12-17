@@ -78,6 +78,26 @@ class UserService {
         })
     }
 
+    async getId(Id) {
+        return this.User.findOne({
+            where: { 
+                Id: Id,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
+    async deleteUser(email) {
+        return this.User.destroy({
+            where: { 
+                email: email,
+            }
+        }).catch( err => {
+            return (err)
+        })
+    }
+
 }
 
 module.exports = UserService;

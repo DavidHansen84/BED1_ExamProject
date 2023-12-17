@@ -1,25 +1,32 @@
 async function deleteBrand(id) {
-    let url = 'http://localhost:3000/brands/delete/'
-        await fetch(url + id, {
+    let errorData = "Something went wrong"
+    try{
+        let url = 'http://localhost:3000/brands/delete/'
+        const response = await fetch(url + id, {
         method: 'DELETE',
         headers: {
             'Content-type': 'application/json'
         },
         body: JSON.stringify({
         })
-    }).then((response) => {
-        if (response.ok) {
-            const resData = 'Deleted brand';
-            location.reload()
-            return Promise.resolve(resData);
-        }
-        return Promise.reject(response);
     })
-      .catch((response) => {
-        
-        alert(response.statusText);
-      });;
+    if (response.ok) {
+        const resData = "Brand deleted"
+        location.reload()
+        return Promise.resolve(resData);
+    } 
+    if (!response.ok) {
+    errorData = await response.json();
+    
+    alert(errorData.error)
+    return Promise.reject(errorData);
+} 
+} catch(err) {
+    
+alert(errorData);
 }
+};
+
 
 async function editBrand(id, Name) {
     let url = 'http://localhost:3000/brands/change/'
@@ -42,8 +49,7 @@ async function editBrand(id, Name) {
         return Promise.reject(errorData);
     })
       .catch((response) => {
-        
-        alert(response.statusText);
+        alert("No change detected!");
       });;
 }
 
@@ -67,4 +73,50 @@ async function editButton(id) {
         
         alert(response.statusText);
       });;
+}
+
+async function addButton() {
+    let url = 'http://localhost:3000/admin/addBrand'
+        await fetch(url, {
+        method: 'GET',
+        headers: {
+            'Content-type': 'application/json'
+        }    
+    }).then((response) => {
+        if (response.ok) {
+            const resData = 'Add Brand page';
+            window.open(url,'_blank', 'width=500px, height=500px')
+            return Promise.resolve(resData);
+        }
+        return Promise.reject(response);
+    })
+      .catch((response) => {
+        alert(response.statusText);
+      });;
+}
+
+async function addBrand(Name) {
+    let url = 'http://localhost:3000/brands/add/'
+        await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-type': 'application/json'
+        },
+        body: JSON.stringify({
+            Name: Name
+        })
+    }).then((response) => {
+        if (response.ok) {
+            const resData = 'Added brand';
+            window.close();
+            opener.location.reload()
+            return Promise.resolve(resData);
+        }
+        const errorData = response.json();
+        return Promise.reject(errorData);
+    })
+      .catch((response) => {
+        
+        alert(response.statusText);
+      });
 }

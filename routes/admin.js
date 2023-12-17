@@ -41,13 +41,14 @@ router.post("/login", jsonParser, async (req, res, next) => {
   // #swagger.description = "Post for registered users to be able to login"
   // #swagger.produces = ['text/html']
   const { Email, Password } = req.body;
+  console.log(Email, Password)
   if (Email == null) {
     return res.status(400).json({ status: "error", error: "Email is required." });
   }
   if (Password == null) {
     return res.status(400).json({ status: "error", error: "Password is required." });
   }
-  userService.getOne(Email).then((data) => {
+  await userService.getOne(Email).then((data) => {
     if (data === null) {
       return res.status(400).json({ status: "error", error: "Incorrect email or password" });
     }
@@ -58,9 +59,7 @@ router.post("/login", jsonParser, async (req, res, next) => {
         return res.status(400).json({ status: "error", error: "Incorrect email or password" });
       }
       let token;
-
       try {
-
         console.log(role)
         token = jwt.sign(
           { id: data.Id, email: data.email, role: role },
@@ -83,11 +82,17 @@ router.get('/products', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.produces = ['text/html']
   try {
     const response = await axios.get("http://localhost:3000/products");
+    if (!response) {
+      return res.status(400).json({ status: "error", error: "Error getting products form the API" });
+    }
     let data = response.data;
+    if (!data) {
+      return res.status(400).json({ result: "Fail", error: "Data not found" });
+    }
     res.render('products', { title: 'Products', products: data.products, brands: data.brands, categories: data.categories });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ result: "Fail", error: "Error getting product" })
+    res.status(500).json({ result: "Fail", error: "Error getting product" }).redirect('/admin/products')
   }
 });
 
@@ -98,6 +103,9 @@ router.get('/products/search', isAuth, isAdmin, async function (req, res, next) 
   try {
 
     let data = req.query.jsonData;
+    if (!data) {
+      return res.status(400).json({ status: "error", error: "Error getting search data" });
+    }
 
     const jsonData = JSON.parse(data);
 
@@ -116,18 +124,31 @@ router.get('/editProduct/:id', isAuth, isAdmin, async function (req, res, next) 
   // #swagger.produces = ['text/html']
   try {
     const response = await axios.get("http://localhost:3000/products");
+    if (!response) {
+      return res.status(400).json({ result: "Fail", error: "No response from the products API" });
+    }
     let productId = req.params.id;
+    if (!productId) {
+      return res.status(400).json({ result: "Fail", error: "Product ID not found" });
+    }
     let data = response.data;
-    res.render('editProduct', { title: 'Product', product: data.products[productId - 1], brands: data.brands, categories: data.categories });
+    if (!data) {
+      return res.status(400).json({ result: "Fail", error: "Data not found" });
+    }
+    let product = data.products.find(product => product.Id == productId);
+    if (!product) {
+      return res.status(400).json({ result: "Fail", error: "Product not found" });
+    }
+    res.render('editProduct', { title: 'Product', product: product, brands: data.brands, categories: data.categories });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error editing product" })
   }
 });
 
-router.get('/add', isAuth, isAdmin, async function (req, res, next) {
+router.get('/addProduct', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.tags = ['Admin']
-  // #swagger.description = "Admin page to edit the products"
+  // #swagger.description = "Admin page to add a new product"
   // #swagger.produces = ['text/html']
   try {
     const response = await axios.get("http://localhost:3000/products");
@@ -135,7 +156,33 @@ router.get('/add', isAuth, isAdmin, async function (req, res, next) {
     res.render('addProduct', { title: 'Product', brands: data.brands, categories: data.categories });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ result: "Fail", error: "Error editing product" })
+    res.status(500).json({ result: "Fail", error: "Error adding product" })
+  }
+});
+
+router.get('/addBrand', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Admin']
+  // #swagger.description = "Admin page to add a new Brand"
+  // #swagger.produces = ['text/html']
+  try {
+    
+    res.render('addBrand', { title: 'addBrand'});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ result: "Fail", error: "Error adding brand" })
+  }
+});
+
+router.get('/addcategory', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Admin']
+  // #swagger.description = "Admin page to add a new Category"
+  // #swagger.produces = ['text/html']
+  try {
+    
+    res.render('addCategory', { title: 'addCategory'});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ result: "Fail", error: "Error adding category" })
   }
 });
 
@@ -159,9 +206,22 @@ router.get('/editBrand/:id', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.produces = ['text/html']
   try {
     const response = await axios.get("http://localhost:3000/brands");
+    if (!response) {
+      return res.status(400).json({ result: "Fail", error: "No response from the brand API" });
+    }
     let brandId = req.params.id;
+    if (!brandId) {
+      return res.status(400).json({ result: "Fail", error: "Brand ID not found" });
+    }
     let data = response.data;
-    res.render('editBrand', { title: 'Brand', brand: data.brands[brandId - 1] });
+    if (!data) {
+      return res.status(400).json({ result: "Fail", error: "Data not found" });
+    }
+    let brand = data.brands.find(brand => brand.Id == brandId);
+    if (!brand) {
+      return res.status(400).json({ result: "Fail", error: "Brand not found" });
+    }
+    res.render('editBrand', { title: 'Brand', brand: brand });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error editing brand" })
@@ -189,9 +249,22 @@ router.get('/editCategory/:id', isAuth, isAdmin, async function (req, res, next)
   // #swagger.produces = ['text/html']
   try {
     const response = await axios.get("http://localhost:3000/categories");
+    if (!response) {
+      return res.status(400).json({ result: "Fail", error: "No response from the categories API" });
+    }
     let categoryId = req.params.id;
+    if (!categoryId) {
+      return res.status(400).json({ result: "Fail", error: "Category ID not found" });
+    }
     let data = response.data;
-    res.render('editCategory', { title: 'Brand', category: data.categories[categoryId - 1] });
+    if (!data) {
+      return res.status(400).json({ result: "Fail", error: "Data not found" });
+    }
+    let category = data.categories.find(category => category.Id == categoryId);
+    if (!category) {
+      return res.status(400).json({ result: "Fail", error: "Category not found" });
+    }
+    res.render('editCategory', { title: 'Category', category: category });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error editing categories" })
@@ -220,11 +293,23 @@ router.get('/users', isAuth, isAdmin, async function (req, res, next) {
   try {
     const response = await axios.get("http://localhost:3000/users");
     let data = response.data;
-    console.log(data.memberships[0])
     res.render('users', { title: 'Express', users: data.users, memberships: data.memberships, roles: data.roles });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error getting users" })
+  }
+});
+
+router.get('/addUser', isAuth, isAdmin, async function (req, res, next) {
+  // #swagger.tags = ['Admin']
+  // #swagger.description = "Admin page to add a new User"
+  // #swagger.produces = ['text/html']
+  try {
+    
+    res.render('addUser', { title: 'addUser'});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ result: "Fail", error: "Error adding category" })
   }
 });
 
@@ -234,10 +319,26 @@ router.get('/editUser/:id', isAuth, isAdmin, async function (req, res, next) {
   // #swagger.produces = ['text/html']
   try {
     const response = await axios.get("http://localhost:3000/users");
+    if (!response) {
+      return res.status(400).json({ result: "Fail", error: "No response from the user API" });
+    }
     let userId = req.params.id;
+    if (!userId) {
+      return res.status(400).json({ result: "Fail", error: "User ID not found" });
+    }
     let data = response.data;
+    if (!data) {
+      return res.status(400).json({ result: "Fail", error: "Data not found" });
+    }
     let roles = await roleService.getAll();
-    res.render('editUser', { title: 'User', user: data.users[userId - 1], roles: roles });
+    if (!roles) {
+      return res.status(400).json({ result: "Fail", error: "Roles not found" });
+    }
+    let user = data.users.find(user => user.Id == userId);
+    if (!user) {
+      return res.status(400).json({ result: "Fail", error: "User not found" });
+    }
+    res.render('editUser', { title: 'User', user: user, roles: roles });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error editing users" })
@@ -267,7 +368,7 @@ router.get('/editOrder/:id', isAuth, isAdmin, async function (req, res, next) {
     let orderId = req.params.id;
     let data = response.data;
     let statuses = await statusService.get()
-    res.render('editOrders', { title: 'Orders', order: data.orders[orderId - 1], statuses: statuses });
+    res.render('editOrder', { title: 'Orders', order: data.orders[orderId - 1], statuses: statuses });
   } catch (err) {
     console.error(err);
     res.status(500).json({ result: "Fail", error: "Error editing order" })

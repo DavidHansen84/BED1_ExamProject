@@ -23,8 +23,17 @@ router.get('/', jsonParser, async function (req, res, next) {
     // #swagger.produces = ['text/html']
   try {
     let products = await productService.get();
+    if (!products) {
+      return res.status(400).json({ result: "Fail", message: "Error getting products" });
+    }
   let brands = await brandService.get();
+  if (!brands) {
+    return res.status(400).json({ result: "Fail", message: "Error getting brands" });
+  }
   let categories = await categoryService.get();
+  if (!categories) {
+    return res.status(400).json({ result: "Fail", message: "Error getting categories" });
+  }
   res.status(200).json({ result: "Success", products: products, brands: brands, categories: categories });
 } catch (err) {
   console.error(err);
@@ -150,31 +159,27 @@ router.delete('/del/cart', jsonParser, isAuth, async function (req, res, next) {
     // #swagger.description = "Removes a product from a users cart"
     // #swagger.produces = ['text/html']
   try {
-    const { cartName, productId, quantity } = req.body
+    const { cartName, productId } = req.body
   const userId = req.user.id;
   if (userId == null) {
     return res.status(400).json({ status: "error", error: "Error getting the user ID" });
   }
+  if (productId == null) {
+    return res.status(400).json({ status: "error", error: "Error getting the product ID" });
+  }
   let cart = await cartService.getOne(cartName, userId);
   if (!cart) {
-    cart = await cartService.create(cartName, userId)
+    return res.status(400).json({ status: "error", error: "Cart does not exist" });
   }
   let PIC = await productsInCartService.getOne(cart.Id, productId)
   if (!PIC) {
     res.status(400).json({ result: "Fail", message: "That product is not in this cart" });
     res.end();
   } else {
-    let newQuantity = PIC.Quantity - quantity;
-    if (newQuantity == 0) {
-      await productsInCartService.remove(PIC.Id)
+      await productsInCartService.remove(productId)
       res.status(200).json({ result: "Success", message: "Product removed from cart" });
-    } else {
-      await productsInCartService.update(cart.Id, newQuantity);
-      PIC = await productsInCartService.getAll(cart.Id)
-      res.status(200).json({ result: "Success", cart: cart, ProductsInCart: PIC });
     }
-  }
-} catch (err) {
+  } catch (err) {
   console.error(err);
   res.status(500).json({ result: "Error", error: "Error removing from cart" })
 }

@@ -176,12 +176,80 @@
         }
       }
     },
-    "/admin/add": {
+    "/admin/addProduct": {
       "get": {
         "tags": [
           "Admin"
         ],
-        "description": "Admin page to edit the products",
+        "description": "Admin page to add a new product",
+        "produces": [
+          "text/html"
+        ],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/addBrand": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "description": "Admin page to add a new Brand",
+        "produces": [
+          "text/html"
+        ],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/addcategory": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "description": "Admin page to add a new Category",
         "produces": [
           "text/html"
         ],
@@ -398,6 +466,40 @@
           "Admin"
         ],
         "description": "See all the users",
+        "produces": [
+          "text/html"
+        ],
+        "parameters": [
+          {
+            "name": "cookie",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/addUser": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "description": "Admin page to add a new User",
         "produces": [
           "text/html"
         ],
@@ -672,6 +774,9 @@
           },
           "400": {
             "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
           },
           "500": {
             "description": "Internal Server Error"
@@ -1153,6 +1258,9 @@
           "200": {
             "description": "OK"
           },
+          "400": {
+            "description": "Bad Request"
+          },
           "500": {
             "description": "Internal Server Error"
           }
@@ -1275,9 +1383,6 @@
                   "example": "any"
                 },
                 "productId": {
-                  "example": "any"
-                },
-                "quantity": {
                   "example": "any"
                 }
               }
@@ -2174,6 +2279,9 @@
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
           },
           "500": {
             "description": "Internal Server Error"

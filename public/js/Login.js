@@ -11,6 +11,7 @@ async function populateButton() {
         if (response.ok) {
             const resData = 'Database Populated';
             location.reload()
+            alert("Database Populated")
             return Promise.resolve(resData);
         }
         return Promise.reject(response);

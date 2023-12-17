@@ -9,24 +9,24 @@
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
-    <h2 class="p-3"> Edit category details</h2>
-    
-            <h3>Id   <%= category.Id %></h3>
+    <h2 class="p-3"> Add a brand</h2>
 
             <form>
                 <label for="categoryName">Name</label>
-                <input type="text" id="categoryName" name="categoryName" value="<%= category.Name %>">
+                <input type="text" id="categoryName" name="categoryName" value="">
             </form>
             
             
-            <button class="btn-sm btn-warning" onclick="captureValues()">Update</button>
+            
+            <button class="btn-sm btn-warning" onclick="captureValues()">Add</button>
 
     
     <script>
         async function captureValues() {
             var newName = document.getElementById("categoryName").value;
+            
     
-            await editCategory(<%=category.Id%>, newName);
+            await addCategory(newName);
         }
     </script>
     <script src="../../js/Categories.js"></script>

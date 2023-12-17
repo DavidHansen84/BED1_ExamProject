@@ -70,7 +70,7 @@ router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
       return res.end();
     }
     if (CategoryList.Name == name) {
-      res.status(400).json({ result: "Fail", error: "Category already has this name" })
+      res.status(200).json({ result: "Success", message: "Category already has this name, no changes made" })
       return res.end();
     }
     await categoryService.update(CategoryId, name);
@@ -150,7 +150,7 @@ router.delete('/delete/:id', isAuth, isAdmin, async (req, res) => {
       res.status(200).json({ result: "Success", deletedCategory: CategoryList, message: "Category deleted" })
       return res.end();
     } else {
-      res.status(400).json({ result: "Fail", error: "Category is in use" })
+      res.status(400).json({ result: "Fail", error: "Cannot delete. Category is in use" })
       return res.end();
     }
   } catch (err) {

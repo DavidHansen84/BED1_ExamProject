@@ -1,4 +1,3 @@
-
 async function deleteProduct(id) {
     let url = 'http://localhost:3000/products/delete/'
         await fetch(url + id, {
@@ -100,7 +99,7 @@ async function editButton(id) {
 }
 
 async function addButton() {
-    let url = 'http://localhost:3000/admin/add'
+    let url = 'http://localhost:3000/admin/addProduct'
         await fetch(url, {
         method: 'GET',
         headers: {
@@ -108,7 +107,7 @@ async function addButton() {
         }    
     }).then((response) => {
         if (response.ok) {
-            const resData = 'Edit product page';
+            const resData = 'Add product page';
             window.open(url,'_blank', 'width=500px, height=500px')
             return Promise.resolve(resData);
         }
@@ -148,9 +147,8 @@ async function addProduct(Name, ImageURL, Description, Price, Quantity, Brand, C
       .catch((response) => {
         
         alert(response.statusText);
-      });;
+      });
 }
-
 
 function search(productSearch, categorySearch, brandSearch) {
     const url = 'http://localhost:3000/search';

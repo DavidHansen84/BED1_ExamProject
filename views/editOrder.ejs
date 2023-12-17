@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/stylesheets/navbar.css" />
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <h2 class="p-3"> Change order status</h2>
+    
+            <h3>Id   <%= order.Id %></h3>
+            <form>
+              <label for="orderNumber">Order</label>
+              <span id="orderNumber"><%= order.OrderNumber %></span>
+            </form>
+
+            <form>
+                <label for="Status">Status</label>
+                <select id="Status" name="Status">
+                    <% statuses.forEach(function(status) { %>
+                        <option value="<%= status.Id %>" <%= status.Id === order.OrderId ? 'selected' : " " %>><%= status.Name %></option>
+                    <% }); %>
+                </select>
+            </form>
+            
+            <button class="btn-sm btn-warning" onclick="captureValues()">Update</button>
+
+    
+            <script>
+              async function captureValues() {
+                  var Status = parseInt(document.getElementById("Status").value);
+                  var orderNumber = document.getElementById("orderNumber").innerText;
+          
+                  await editOrder(orderNumber, Status);
+              }
+          </script>
+    <script src="../../js/Orders.js"></script>
+  </body>
+</html>

@@ -10,7 +10,7 @@ var RoleService = require('../services/RoleService');
 var roleService = new RoleService(db);
 var bodyParser = require('body-parser')
 var jsonParser = bodyParser.json();
-const { isAuth } = require('../middleware/middleware');
+const { isAuth, isAdmin } = require('../middleware/middleware');
 var jwt = require('jsonwebtoken');
 const validator = require('email-validator');
 var axios = require("axios");
@@ -73,13 +73,13 @@ router.post("/register", async (req, res, next) => {
     // #swagger.produces = ['text/html']
     try{
       const { Username, Password, Email, FirstName, LastName, Address, Telephone } = req.body;
-    if (Username == null) {
+    if (Username == null || Username.trim() === "") {
       return res.status(400).json({status: "error", error: "Username is required."});
     }
-    if (Password == null) {
+    if (Password == null || Password.trim() === "") {
       return res.status(400).json({status: "error", error: "Password is required."});
     }
-    if (Email == null) {
+    if (Email == null || Email.trim() === "") {
       return res.status(400).json({status: "error", error: "Email is required."});
     }
     // got this from https://singh-sandeep.medium.com/email-validation-in-node-js-using-email-validator-module-20b045b0c107
@@ -89,24 +89,24 @@ router.post("/register", async (req, res, next) => {
      res.status(400).json({ status: "Bad Request", error: "email must be in a valid email format (user@mail.com)"});
      return res.end();
     }
-    if (FirstName == null) {
+    if (FirstName == null || FirstName.trim() === "") {
       return res.status(400).json({status: "error", error: "FirstName is required."});
     }
-    if (LastName == null) {
+    if (LastName == null || LastName.trim() === "") {
       return res.status(400).json({status: "error", error: "LastName is required."});
     }
-    if (Address == null) {
+    if (Address == null || Address.trim() === "") {
       return res.status(400).json({status: "error", error: "Address is required."});
     }
-    if (Telephone == null) {
+    if (Telephone == null || Telephone.trim() === "" ) {
       return res.status(400).json({status: "error", error: "Telephone number is required."});
     }
-    if (isNaN(Telephone)) {res.status(400).json({ status: "Bad Request", error: "Telephone number have to be a number"});
-      return res.end();
+    if (isNaN(Telephone)) {
+      return res.status(400).json({ status: "Bad Request", error: "Telephone number have to be a number"});
+     
      } 
      if (!isNaN(FirstName) || !isNaN(LastName) || !isNaN(Username) || !isNaN(Address) ) {
-      res.status(400).json({ status: "Bad Request", error: "FirstName, LastName, Username and Addresss must be valid letters" });
-      return res.end();
+      return res.status(400).json({ status: "Bad Request", error: "FirstName, LastName, Username and Addresss must be valid letters" });
      } 
     let membership = await membershipService.getOne("Bronze");
     let role = await roleService.getOne("User");
@@ -131,18 +131,23 @@ router.post("/register", async (req, res, next) => {
   }
 });
 
-router.delete("/delete", isAuth, jsonParser, async (req, res, next) => {
+router.delete("/delete", isAuth, isAdmin, jsonParser, async (req, res, next) => {
   // #swagger.tags = ['Auth']
     // #swagger.description = "Deletes user, needs to be signed in"
     // #swagger.produces = ['text/html']
     try {
   let userEmail = req.body.email;
+  console.log(userEmail);
   if (userEmail == null) {
     return res.status(400).json({status: "error", error: "Email is required."});
   }
   var user = await userService.getOne(userEmail);
   if (user == null) {
     return res.status(400).json({status: "error", error: "No such user in the database"})
+  }
+  const role = await roleService.get(user.dataValues.RoleId)
+  if ( role[0].Name == "Admin" ) {
+    return res.status(400).json({status: "error", error: "Cannot delete Admin"})
   }
   await userService.deleteUser(userEmail);
   res.status(200).json({result: "You deleted account " + userEmail +  "."});

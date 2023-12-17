@@ -9,24 +9,24 @@
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
-    <h2 class="p-3"> Edit brand details</h2>
-    
-            <h3>Id   <%= brand.Id %></h3>
+    <h2 class="p-3"> Add a brand</h2>
 
             <form>
                 <label for="brandName">Name</label>
-                <input type="text" id="brandName" name="brandName" value="<%= brand.Name %>">
+                <input type="text" id="brandName" name="brandName" value="">
             </form>
             
             
-            <button class="btn-sm btn-warning" onclick="captureValues()">Update</button>
+            
+            <button class="btn-sm btn-warning" onclick="captureValues()">Add</button>
 
     
     <script>
         async function captureValues() {
             var newName = document.getElementById("brandName").value;
+            
     
-            await editBrand(<%=brand.Id%>, newName);
+            await addBrand(newName);
         }
     </script>
     <script src="../../js/Brands.js"></script>

@@ -9,13 +9,12 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/stylesheets/navbar.css" />
-    <link rel="stylesheet" href="/stylesheets/base.css" />
     <link rel="stylesheet" href="/stylesheets/index.css" />
     <link rel="stylesheet" href="/stylesheets/login.css" />
+    <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
 
   <body>
-    <%- include('./partials/navbar.ejs') %>
     <div id="login-form">
       <form action="/admin/login" method="post">
         <section>
@@ -41,9 +40,7 @@
         </section>
         <button type="submit">Sign in</button>
       </form>
-      <button class="btn-sm btn-success" onclick="populateButton()">
-        Populate
-      </button>
+      <button class="btn-sm btn-success" onclick="populateButton()"> Populate </button>
       <hr />
     </div>
 
@@ -55,6 +52,19 @@
         <a href="https://www.passportjs.org">Passport</a>
       </p>
     </footer>
+    <script>
+      // Function to extract query parameters from the URL
+      function getQueryParam(name) {
+        const urlSearchParams = new URLSearchParams(window.location.search);
+        return urlSearchParams.get(name);
+      }
+    
+      // Check for error parameter in the URL and show an alert
+      const errorParam = getQueryParam('error');
+      if (errorParam) {
+        alert(errorParam);
+      }
+    </script>
     <script src="../js/Login.js"></script>
   </body>
 </html>

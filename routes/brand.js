@@ -29,15 +29,16 @@ router.post('/add', isAuth, isAdmin, async function (req, res, next) {
   const { Name } = req.body;
   try {
     if (!Name) {
-      res.status(400).json({ result: "Fail", error: "Name of brand must be provided" })
-      return res.end();
+      return res.status(400).json({ result: "error", error: "Name of brand must be provided" })
     }
     let nameExist = await brandService.getOne(Name)
     if (nameExist) {
-      res.status(400).json({ result: "Fail", error: "Brand name already exist" })
-      return res.end();
+      return res.status(400).json({ result: "error", error: "Brand name already exist" })
     }
     newBrand = await brandService.create(Name)
+    if (!newBrand) {
+      return res.status(400).json({ status: "error", error: "Error creating brand" });
+    }
     res.status(200).json({ result: "Success", addedBrand: newBrand });
   } catch (err) {
     return res.status(500).json({ result: "Fail", error: "Error creating brand" })
@@ -52,7 +53,6 @@ router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
     // #swagger.produces = ['text/html']
   try {
     const BrandId = parseInt(req.params.id);
-    console.log(BrandId)
     const name = req.body.Name;
     if (!name) {
       res.status(400).json({ result: "Fail", error: "Name not provided" })
@@ -64,13 +64,12 @@ router.put('/change/:id', isAuth, isAdmin, async function (req, res, next) {
       return res.end();
     }
     const BrandList = await brandService.getOneId(BrandId);
-    console.log(BrandList)
     if (BrandList == null) {
       res.status(400).json({ result: "Fail", error: "Brand does not exist" })
       return res.end();
     }
     if (BrandList.Name == name) {
-      res.status(400).json({ result: "Fail", error: "Brand already has this name" })
+      res.status(200).json({ result: "Success", message: "Brand already has this name, no changes made" })
       return res.end();
     }
     await brandService.update(BrandId, name);
@@ -150,7 +149,7 @@ router.delete('/delete/:id', isAuth, isAdmin, async (req, res) => {
       res.status(200).json({ result: "Success", deletedBrand: BrandList, message: "Brand deleted" })
       return res.end();
     } else {
-      res.status(400).json({ result: "Fail", error: "Brand is in use" })
+      res.status(400).json({ result: "Fail", error: "Cannot delete. Brand is in use" })
       return res.end();
     }
   } catch (err) {

@@ -16,7 +16,13 @@ router.post('/', jsonParser, async function (req, res, next) {
     // #swagger.produces = ['text/html']
   try{
   let brands = await brandService.get();
+  if (!brands) {
+    return res.status(400).json({ result: "Fail", error: "No response from the brand API" });
+  }
   let categories = await categoryService.get();
+  if (!categories) {
+    return res.status(400).json({ result: "Fail", error: "No response from the categories API" });
+  }
     const { productSearch, categorySearch, brandSearch } = req.body;
 
     const productQuery = `SELECT * FROM ecommerce.products WHERE Name LIKE '%${productSearch}%';`

@@ -87,7 +87,6 @@ router.get('/one', isAuth, async function (req, res, next) {
       return res.end();
     }
     let order = await orderService.getOne(orderName, userId);
-    console.log(order)
     if (order == null) {
       res.status(400).json({ result: "Fail", message: "Order does not exist" });
       return res.end();
@@ -104,11 +103,10 @@ router.get('/one', isAuth, async function (req, res, next) {
       discount = 0.30;
     }
     if (membership.Name == "Bronze") {
-      console.log("Membership is Bronze. No discount!")
+      discount = 0;
     }
 
     let PIO = await productsInOrderService.getAll(order.Id)
-    console.log(PIO)
     if (!PIO) {
       res.status(400).json({ result: "Fail", message: "Order does not exist" });
       return res.end();
@@ -191,6 +189,10 @@ router.get('/all', async function (req, res, next) {
   let OrdersAndProducts = [];
   try {
     let status = await statusService.get();
+    if (!status) {
+      res.status(400).json({ result: "Fail", message: "Error getting status" });
+      return res.end();
+    }
     let orders = await orderService.getAllOrders();
     if (orders == null) {
       res.status(400).json({ result: "Fail", message: "Order does not exist" });
@@ -352,6 +354,7 @@ router.put('/update', isAuth, isAdmin, async function (req, res, next) {
     // #swagger.produces = ['text/html']
   try{
   const { orderNumber, newStatus } = req.body;
+  console.log(req.body)
   if (!orderNumber) {
     res.status(400).json({ status: "error", error: "orderNumber must be provided" });
       return res.end();
@@ -360,17 +363,19 @@ router.put('/update', isAuth, isAdmin, async function (req, res, next) {
     res.status(400).json({ status: "error", error: "newStatus must be provided" });
       return res.end();
   }
+  console.log(orderNumber)
+  console.log(newStatus)
   const orderExists = await orderService.getOrderNumber(orderNumber);
     if (orderExists === null) {
       res.status(400).json({ result: "Fail", error: "Order does not exist" })
       return res.end();
     }
-    console.log(orderExists)
   const status = await statusService.getOneId(newStatus);
   if (status == null) {
     res.status(400).json({ status: "error", error: "Error getting the status" });
       return res.end();
   }
+  console.log(status)
   await orderService.update(orderNumber, status.Id);
   order = await orderService.getOrderNumber(orderNumber);
   res.status(200).json({ status: "Status Updated", Order: order, NewStatus: newStatus  });

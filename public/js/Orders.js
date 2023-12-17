@@ -1,5 +1,5 @@
 async function editOrder(OrderNumber, Status) {
-    let url = 'http://localhost:3000/order/update'
+    let url = 'http://localhost:3000/orders/update'
     await fetch(url, {
         method: 'PUT',
         headers: {
@@ -7,20 +7,22 @@ async function editOrder(OrderNumber, Status) {
         },
         body: JSON.stringify({
             orderNumber: OrderNumber,
-            StatusId: Status
+            newStatus: Status
         })
     }).then((response) => {
         if (response.ok) {
+            console.log("success")
             const resData = 'Edited order';
             window.close();
             opener.location.reload()
             return Promise.resolve(resData);
         }
         const errorData = response.json();
+        alert("fail")
         return Promise.reject(errorData);
     })
       .catch((response) => {
-        
+        alert("hello")
         alert(response.statusText);
       });;
 }

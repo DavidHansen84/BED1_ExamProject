@@ -10,6 +10,7 @@
       <%- include('./partials/navbar.ejs') %>
       </div>
     <h2 class="p-3">Users</h2>
+    <button class="btn-sm btn-success" onclick="addButton()">+ Add</button>
     <div class="list-group">
       
         <table class="table" id="productsTable">
@@ -40,7 +41,8 @@
                 <td><%= user.telephoneNumber %></td>
                 <td><%= roles[user.RoleId -1].Name %></td>
                 <td><%= memberships[user.MembershipId - 1].Name %></td>
-                <td><button class="btn-sm btn-warning" onclick="editButton(<%=user.Id%>)">Edit</button></td>
+                <td><button class="btn-sm btn-warning" onclick="editButton('<%=user.Id%>')">Edit</button>
+                <button class="btn-sm btn-danger" onclick="deleteButton('<%=user.email%>', '<%=user.username%>')">Delete</button></td>
                 
               </tr>
                 
