@@ -17,7 +17,7 @@ DIALECT = "mysql"
 DIALECTMODEL = "mysql2"
 PORT = "3000"
 HOST = "localhost"
-PRODUCTS_API = "http://backend.restapi.co.za/items/products"
+PRODUCTS_API = "http://path.to/products"
 TOKEN_SECRET= "Long random text"
 
 ---
